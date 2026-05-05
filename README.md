@@ -22,7 +22,8 @@
 *   **Frontend**: [HTML](https://html.com/)
 *   **Styling**: [CSS](https://css.com/)
 *   **API**: [TMDB API](https://www.themoviedb.org/)
-*   **State Management**: Vanilla JavaScript
+*   **State Management**: [JAVASCRIPT](https://www.javascript.com/)
+*   **Backend** [DJANGO](https://www.djangoproject.com/)
 
 ---
 
@@ -32,7 +33,7 @@ Follow these steps to run the project locally:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/wpozn1/projekt1.git
-   cd projekt1
+   git clone https://github.com/WiJaMaKu/StreamMatch
+   cd StreamMatch
    ```
 2. **Open the application via index.html**
