@@ -5,7 +5,7 @@ const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 let currentMovie = null;
 let watchlist = [];
 let drawCount = 0;
-const MAX_DRAWS = 3;
+const MAX_DRAWS = 5;
 let movieSaved = false;
 function updateTime(val) {
     const el = document.getElementById('time-val');
@@ -30,7 +30,7 @@ function nextView(viewId) {
 async function fetchMovies() {
 
     if (drawCount >= MAX_DRAWS) {
-        alert("Osiągnięto limit 3 losowań.");
+        alert("Osiągnięto limit 5 losowań.");
         return;
     }
 
@@ -174,6 +174,12 @@ function toggleWatchlist() {
         item.style.animationDelay = '-' + delay + 's';
         item.style.filter = `blur(${blurValue}px)`;
     }
+}
+function goBack() {
+    const goBackBtn = document.getElementById('goBack');
+    goBackBtn.addEventListener('click', () => {
+        nextView('');
+    })
 }
 
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);
