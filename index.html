@@ -51,6 +51,7 @@
             <div class="time-display"><span id="time-val">110</span> min</div>
             <input type="range" min="60" max="240" value="110" id="time-slider" oninput="updateTime(this.value)">
             <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
+            <div class="go-back" onclick="nextView('view-start')">Wróć</div>
         </div>
 
         <div id="view-platforms" class="view">
@@ -77,6 +78,7 @@
                 <div class="option-card" data-id="53" onclick="toggleSelect(this)">Thriller</div>
             </div>
             <button class="btn-primary" onclick="fetchMovies()">Losuj film!</button>
+            <div class="go-back" onclick="nextView('view-platforms')">Wróć</div>
         </div>
 
         <div id="view-result" class="view">
