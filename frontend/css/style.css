@@ -202,12 +202,90 @@ input[type=range] {
 .movie-img {
     width: 100%;
     height: 300px;
+    position: relative;
+    /* Pozwala warstwom układać się jedna na drugiej */
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #000;
+}
+
+/* WARSTWA 1 (Tło): Rozmyty obrazek wypełniający boki */
+.movie-img::before {
+    content: "";
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    /* Lekki margines na rozmycie */
+
+    background-image: inherit;
+    /* Automatycznie bierze obrazek z .movie-img */
+    background-size: cover;
+    /* Wypełnia całą ramkę (boki) */
+    background-position: center;
+
+    filter: blur(15px) brightness(0.5);
+    /* Efekt rozmycia i przyciemnienia */
+    z-index: 1;
+}
+
+/* WARSTWA 2 (Front): Ostry plakat na samym środku */
+.movie-img::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-image: inherit;
+    /* Ten sam obrazek co warstwa pod spodem */
+    background-size: contain;
+    /* Pokazuje CAŁY obrazek bez ucinania */
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 2;
+    /* Musi być nad warstwą rozmycia */
+}
+
+/* To samo dla listy życzeń (Watchlist) */
+.watchlist-movie-img {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #000;
+}
+
+.watchlist-movie-img::before {
+    content: "";
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background-image: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(0.5);
+    z-index: 1;
+}
+
+.watchlist-movie-img::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: inherit;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 8px;
-    background-color: #222;
-    object-fit: contain;
+    z-index: 2;
 }
 
 .watchlist-movie-img {
