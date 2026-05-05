@@ -175,11 +175,6 @@ function toggleWatchlist() {
         item.style.filter = `blur(${blurValue}px)`;
     }
 }
-function goBack() {
-    const goBackBtn = document.getElementById('goBack');
-    goBackBtn.addEventListener('click', () => {
-        nextView('');
-    })
-}
+
 
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);
