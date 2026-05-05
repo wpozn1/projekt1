@@ -1,15 +1,13 @@
-// Konfiguracja API
+
 const API_KEY = '8294e370833db44041f30ab168f6cc83';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
-// Zmienne globalne
 let currentMovie = null;
 let watchlist = [];
 let drawCount = 0;
 const MAX_DRAWS = 3;
 
-// --- Funkcje UI ---
 function updateTime(val) {
     const el = document.getElementById('time-val');
     if (el) el.innerText = val;
@@ -30,7 +28,6 @@ function nextView(viewId) {
     }
 }
 
-// --- Logika Losowania ---
 async function fetchMovies() {
     if (drawCount >= MAX_DRAWS) {
         alert("Osiągnięto limit 3 losowań.");
@@ -44,7 +41,6 @@ async function fetchMovies() {
 
     const randomPage = Math.floor(Math.random() * 3) + 1;
 
-    // DODANO: vote_average.gte=7.0 oraz vote_count.gte=100 dla lepszych wyników
     const filterParams = `&vote_average.gte=7.0&vote_count.gte=100&with_runtime.lte=${maxRuntime}&with_genres=${genreIds}`;
 
     const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pl-PL&sort_by=popularity.desc&include_adult=false&page=${randomPage}${filterParams}`;
@@ -59,7 +55,6 @@ async function fetchMovies() {
             updateDrawButton();
             displayMovie(randomMovie);
         } else {
-            // Logika retry dla strony 1 (jeśli randomPage był > 1 i nic nie znalazło)
             if (randomPage > 1) {
                 const retryUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pl-PL&sort_by=popularity.desc&include_adult=false&page=1${filterParams}`;
                 const retryResponse = await fetch(retryUrl);
@@ -104,7 +99,6 @@ function displayMovie(movie) {
     nextView('view-result');
 }
 
-// --- Watchlista ---
 function saveMovie() {
     if (!currentMovie) return;
     if (watchlist.find(m => m.id === currentMovie.id)) {
@@ -140,27 +134,23 @@ function toggleWatchlist() {
     modal.classList.toggle('active');
 } function createBackgroundIcons() {
     const bgContainer = document.getElementById('bg-animation');
-    // Pobieramy ikony, które już masz w HTML (te 8 sztuk)
     const items = bgContainer.getElementsByClassName('bg-item');
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        // Losujemy parametry
-        const startPos = Math.random() * 100; // Pozycja pozioma (0-100%)
-        const duration = 15 + Math.random() * 20; // Czas przelotu (15-35s)
-        const delay = Math.random() * 20; // Opóźnienie (0-20s)
-        const size = 25 + Math.random() * 40; // Wielkość ikony
-        const blurValue = Math.random() * 5 + 2; // Rozmycie (2-7px)
+        const startPos = Math.random() * 100;
+        const duration = 15 + Math.random() * 20;
+        const delay = Math.random() * 20;
+        const size = 25 + Math.random() * 40;
+        const blurValue = Math.random() * 5 + 2;
 
-        // Nakładamy style
         item.style.left = startPos + '%';
         item.style.fontSize = size + 'px';
         item.style.animationDuration = duration + 's';
-        item.style.animationDelay = '-' + delay + 's'; // Ujemny delay, by ikony już były w ruchu po odświeżeniu
+        item.style.animationDelay = '-' + delay + 's';
         item.style.filter = `blur(${blurValue}px)`;
     }
 }
 
-// Wywołaj funkcję zaraz po załadowaniu strony
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);

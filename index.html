@@ -10,6 +10,7 @@
 </head>
 
 <body>
+
     <div class="bg-animation" id="bg-animation">
         <div class="bg-item">🎬</div>
         <div class="bg-item">🍿</div>
@@ -22,7 +23,6 @@
         <div class="bg-item">🌟</div>
     </div>
     <div id="app">
-        <!-- Watchlist UI sigma sigma sigma -->
         <div id="watchlist-container">
             <div id="watchlist-icon" onclick="toggleWatchlist()">
                 👁️<span id="watchlist-count">0</span>
@@ -39,7 +39,6 @@
             <div class="logo-text">StreamMatch</div>
         </header>
 
-        <!-- Start View -->
         <div id="view-start" class="view active">
             <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
             <h1>StreamMatch</h1>
@@ -47,7 +46,6 @@
             <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
         </div>
 
-        <!-- Step 1: Time -->
         <div id="view-time" class="view">
             <h1>Ile masz czasu?</h1>
             <div class="time-display"><span id="time-val">110</span> min</div>
@@ -55,7 +53,6 @@
             <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
         </div>
 
-        <!-- Step 2: Platforms (TEGO BRAKOWAŁO) -->
         <div id="view-platforms" class="view">
             <h1>Twoje platformy</h1>
             <p class="subtitle">Wybierz serwisy, które posiadasz</p>
@@ -68,7 +65,6 @@
             <button class="btn-primary" onclick="nextView('view-genres')">Dalej</button>
         </div>
 
-        <!-- Step 3: Genres -->
         <div id="view-genres" class="view">
             <h1>Wybierz gatunki</h1>
             <div class="grid-options" id="genre-grid">
@@ -82,7 +78,6 @@
             <button class="btn-primary" onclick="fetchMovies()">Losuj film!</button>
         </div>
 
-        <!-- Result View -->
         <div id="view-result" class="view">
             <div class="movie-card">
                 <div id="res-img" class="movie-img"></div>
@@ -115,7 +110,6 @@
                     style="margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid var(--accent-color); padding-bottom: 5px;">
                     Moja Lista</h3>
                 <ul id="watchlist-items">
-                    <!-- Tutaj wpadają filmy -->
                 </ul>
                 <button class="btn-primary" onclick="toggleWatchlist()"
                     style="padding: 8px; font-size: 13px; margin-top: 15px; background: #333;">Zamknij</button>

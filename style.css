@@ -30,7 +30,6 @@ body {
     text-align: center;
 }
 
-/* Header & Progress */
 header {
     margin-bottom: 40px;
 }
@@ -61,7 +60,6 @@ header {
     box-shadow: 0 0 10px var(--accent-color);
 }
 
-/* Views */
 .view {
     display: none;
     animation: fadeIn 0.4s ease;
@@ -96,7 +94,6 @@ h1 {
     line-height: 1.4;
 }
 
-/* Grid & Cards */
 .grid-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -120,7 +117,6 @@ h1 {
     background: #252525;
 }
 
-/* Slider */
 .time-display {
     background: rgba(0, 168, 232, 0.1);
     color: var(--accent-color);
@@ -146,7 +142,6 @@ input[type=range] {
     font-size: 12px;
 }
 
-/* Buttons */
 .btn-primary {
     background: var(--accent-color);
     color: white;
@@ -188,7 +183,6 @@ input[type=range] {
     text-decoration: underline;
 }
 
-/* Result Card */
 .movie-card {
     background: var(--card-bg);
     border-radius: 20px;
@@ -250,10 +244,9 @@ input[type=range] {
     z-index: 1000;
 }
 
-/* Styl samej ikonki oka */
 #watchlist-icon {
     position: fixed;
-    /* lub relative, zależnie od reszty kodu */
+
     top: 20px;
     right: 20px;
     width: 50px;
@@ -265,7 +258,6 @@ input[type=range] {
     align-items: center;
     cursor: pointer;
     z-index: 999;
-    /* Kontener musi być wysoko */
 }
 
 #watchlist-icon:hover {
@@ -286,19 +278,15 @@ input[type=range] {
     color: white;
     border-radius: 50%;
     display: none;
-    /* JS zmieni na flex */
     justify-content: center;
     align-items: center;
     font-size: 12px;
     font-weight: bold;
 
-    /* TO ROZWIĄZUJE PROBLEM: */
     z-index: 1000 !important;
     border: 2px solid #0d0d0d;
-    /* Kontrastowa obwódka */
 }
 
-/* Modal listy - teraz jako elegancki panel boczny */
 #watchlist-modal {
     display: none;
     position: absolute;
@@ -331,7 +319,6 @@ input[type=range] {
     color: var(--text-main);
 }
 
-/* Kontener tła - pasek filmów */
 .bg-animation {
     position: fixed;
     top: 0;
@@ -339,27 +326,22 @@ input[type=range] {
     width: 100%;
     height: 100%;
     z-index: -1;
-    /* Wygaszone, przyciemnione tło */
     background: radial-gradient(circle at center, #0a0a0a 0%, #020202 100%);
     overflow: hidden;
 }
 
-/* Elementy animowane */
 .bg-item {
     position: absolute;
     bottom: -100px;
     color: #00a8e8;
-    /* Bardzo słaby niebieski */
     font-size: 24px;
     opacity: 0;
-    /* Startuje niewidoczny */
     user-select: none;
     pointer-events: none;
     animation: floatLinearInfinite 40s linear;
     will-change: transform;
 }
 
-/* Płynna animacja w górę z pojawianiem i znikanien */
 @keyframes floatLinearInfinite {
     0% {
         transform: translateY(0) translateX(0) rotate(0deg);
@@ -368,7 +350,6 @@ input[type=range] {
 
     20% {
         opacity: 0.15;
-        /* Powolne pojawianie */
     }
 
     40% {
@@ -381,7 +362,6 @@ input[type=range] {
 
     90% {
         opacity: 0.15;
-        /* Powolne znikanie */
     }
 
     100% {
