@@ -336,38 +336,31 @@ input[type=range] {
     position: absolute;
     bottom: -100px;
     color: #00a8e8;
-    font-size: 24px;
-    opacity: 0;
+    opacity: 0.3;
     user-select: none;
     pointer-events: none;
-    animation: floatLinearInfinite 40s linear;
+
+    animation: floatUp infinite linear;
     will-change: transform;
 }
 
-@keyframes floatLinearInfinite {
+@keyframes floatUp {
     0% {
-        transform: translateY(0) translateX(0) rotate(0deg);
+        transform: translateY(0) rotate(0deg);
         opacity: 0;
     }
 
-    20% {
-        opacity: 0.15;
-    }
-
-    40% {
-        transform: translateY(-20vh) translateX(20px) rotate(90deg);
-    }
-
-    80% {
-        transform: translateY(-60vh) translateX(-40px) rotate(270deg);
+    10% {
+        opacity: 0.3;
     }
 
     90% {
-        opacity: 0.15;
+        opacity: 0.3;
     }
 
     100% {
-        transform: translateY(-120vh) translateX(50px) rotate(360deg);
+
+        transform: translateY(-110vh) rotate(360deg);
         opacity: 0;
     }
 }

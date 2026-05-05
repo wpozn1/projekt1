@@ -155,12 +155,21 @@ function updateWatchlistUI() {
 function toggleWatchlist() {
     const modal = document.getElementById('watchlist-modal');
     modal.classList.toggle('active');
-} function createBackgroundIcons() {
+}
+function createBackgroundIcons() {
     const bgContainer = document.getElementById('bg-animation');
-    const items = bgContainer.getElementsByClassName('bg-item');
+    const icons = ['🎬', '🍿', '⭐', '🎭', '🎥', '🎞️', '💎', '🌟'];
+    const numberOfIcons = 20;
 
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
+    for (let i = 0; i < numberOfIcons; i++) {
+
+        const item = document.createElement('div');
+        item.className = 'bg-item';
+
+
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+        item.innerText = randomIcon;
+
 
         const startPos = Math.random() * 100;
         const duration = 15 + Math.random() * 20;
@@ -168,11 +177,16 @@ function toggleWatchlist() {
         const size = 25 + Math.random() * 40;
         const blurValue = Math.random() * 5 + 2;
 
+
         item.style.left = startPos + '%';
         item.style.fontSize = size + 'px';
         item.style.animationDuration = duration + 's';
         item.style.animationDelay = '-' + delay + 's';
         item.style.filter = `blur(${blurValue}px)`;
+        item.style.opacity = Math.random() * 0.5 + 0.1;
+
+
+        bgContainer.appendChild(item);
     }
 }
 function goBack() {
