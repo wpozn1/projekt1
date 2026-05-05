@@ -1,5 +1,4 @@
-
-const API_KEY = '8294e370833db44041f30ab168f6cc83';
+const API_KEY = '8294e370833db44041f30ab168f6cc83'; // to trzeba wyjebać stąd
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
