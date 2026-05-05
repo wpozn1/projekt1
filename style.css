@@ -270,8 +270,8 @@ input[type=range] {
 
 #watchlist-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: -12px;
+    right: -7px;
     width: 22px;
     height: 22px;
     background: #00a8e8;
