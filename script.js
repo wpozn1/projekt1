@@ -7,7 +7,7 @@ let currentMovie = null;
 let watchlist = [];
 let drawCount = 0;
 const MAX_DRAWS = 3;
-
+let movieSaved = false;
 function updateTime(val) {
     const el = document.getElementById('time-val');
     if (el) el.innerText = val;
@@ -29,6 +29,7 @@ function nextView(viewId) {
 }
 
 async function fetchMovies() {
+
     if (drawCount >= MAX_DRAWS) {
         alert("Osiągnięto limit 3 losowań.");
         return;
@@ -79,9 +80,26 @@ async function fetchMovies() {
 
 function updateDrawButton() {
     const btn = document.getElementById('btn-draw-again');
+    const wybieramFilm = document.getElementById('wybieram-film');
+    wybieramFilm.addEventListener('click', () => {
+        movieSaved = true;
+        updateDrawButton();
+    });
     if (!btn) return;
+
+    if (movieSaved) {
+        btn.disabled = true;
+        btn.innerText = "✅ Wybrałeś już swój film!";
+        btn.style.opacity = "0.5";
+
+        return;
+    }
+
     const remaining = MAX_DRAWS - drawCount;
-    btn.innerText = remaining > 0 ? `🔄 Losuj ponownie (zostało: ${remaining})` : "🚫 Limit wyczerpany";
+    btn.innerText = remaining > 0
+        ? `🔄 Losuj ponownie (zostało: ${remaining})`
+        : "🚫 Limit wyczerpany";
+
     if (remaining <= 0) {
         btn.style.opacity = "0.5";
         btn.disabled = true;
@@ -100,13 +118,19 @@ function displayMovie(movie) {
 }
 
 function saveMovie() {
+
     if (!currentMovie) return;
     if (watchlist.find(m => m.id === currentMovie.id)) {
         alert("Ten film jest już na Twojej liście!");
         return;
     }
+
+
+
     watchlist.push(currentMovie);
     updateWatchlistUI();
+
+
 }
 
 function updateWatchlistUI() {
