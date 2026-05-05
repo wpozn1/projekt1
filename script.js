@@ -140,12 +140,16 @@ function updateWatchlistUI() {
         listEl.innerHTML = '<p style="color: #666; font-size: 13px;">Lista jest pusta</p>';
         countEl.style.display = 'none';
     } else {
-        listEl.innerHTML = watchlist.map(m => `
+        listEl.innerHTML = watchlist.map(m => {
+            const poster = m.poster_path ? (IMG_URL + m.poster_path) : 'https://via.placeholder.com/500x750?text=Brak+Okładki';
+            return `
             <li>
+                <div class="watchlist-movie-img" style="background-image: url('${poster}')"></div>
                 <div style="font-weight: 600;">${m.title}</div>
                 <div style="font-size: 11px; color: var(--text-dim);">${m.release_date ? m.release_date.split('-')[0] : 'N/A'}</div>
             </li>
-        `).join('');
+            `;
+        }).join('');
 
         countEl.innerText = watchlist.length;
         countEl.style.display = watchlist.length > 0 ? 'flex' : 'none';
