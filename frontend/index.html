@@ -32,11 +32,29 @@
         </header>
 
         <div id="view-start" class="view active">
-            <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
-            <h1>StreamMatch</h1>
-            <p class="subtitle">Idealny film na idealny wieczór.<br>Odpowiedz na kilka pytań.</p>
-            <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
-        </div>
+        <div class="main-timer">
+    <!-- Kontener siatki -->
+    <div class="timer-grid">
+        <!-- Rząd 1: Ikony/Tekst -->
+        <div class="grid-item icon">⏱️</div>
+        <div class="grid-item icon">🔴</div>
+        <div class="grid-item icon">REC</div>
+        <div class="grid-item icon">🎭</div>
+
+        <!-- Rząd 2: Bloki -->
+        <div class="grid-item block">1</div>
+        <div class="grid-item block">1</div>
+        <div class="grid-item block">1</div>
+        <div class="grid-item block">1</div>
+    </div>
+</div>
+        
+        <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
+        
+        <h1>StreamMatch</h1>
+        <p class="subtitle">Idealny film na idealny wieczór.<br>Odpowiedz na kilka pytań.</p>
+        <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
+    </div>
 
         <div id="view-time" class="view">
             <h1>Ile masz czasu?</h1>
@@ -45,8 +63,9 @@
             <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
             <div class="go-back" onclick="nextView('view-start')">Wróć</div>
         </div>
-
+        
         <div id="view-platforms" class="view">
+            <h1 class = "eo">eo</h1>
             <h1>Twoje platformy</h1>
             <p class="subtitle">Wybierz serwisy, które posiadasz</p>
             <div class="grid-options">
