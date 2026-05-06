@@ -25,8 +25,9 @@
 /* Główny kontener - wyrównujemy wszystko do lewej */
 .main-timer {
     display: flex;
+    position: relative;
+    top:-120px;
     justify-content: center; /* Centruje cały timer na stronie */
-    margin-bottom: 150px;
 }
 
 .timer-grid {
