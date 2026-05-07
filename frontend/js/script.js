@@ -1,7 +1,6 @@
 const API_KEY = '8294e370833db44041f30ab168f6cc83'; // to trzeba wyjebać stąd
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-
 let currentMovie = null;
 let watchlist = [];
 let drawCount = 0;
@@ -17,6 +16,11 @@ function toggleSelect(el) {
 }
 
 function nextView(viewId) {
+    const timeBlock = document.getElementById('time-block');
+    const streamingsBlock = document.getElementById('streaming-block');
+    const genresBlock = document.getElementById('genres-block');
+    const blue = '#3B82F6';
+    const grey = "#808080"
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
@@ -25,6 +29,36 @@ function nextView(viewId) {
     if (header) {
         header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
     }
+    const summaryBlock = document.getElementById('summary-block');
+    if(viewId === 'view-time'){
+        timeBlock.style.backgroundColor  = blue; streamingsBlock.style.backgroundColor = grey; genresBlock.style.backgroundColor = grey; summaryBlock.style.backgroundColor = grey;
+    }else if(viewId === 'view-platforms'){
+        timeBlock.style.backgroundColor = blue; streamingsBlock.style.backgroundColor = blue; genresBlock.style.backgroundColor = grey; summaryBlock.style.backgroundColor = grey;
+    }else if(viewId === 'view-genres'){
+        timeBlock.style.backgroundColor = blue; streamingsBlock.style.backgroundColor = blue; genresBlock.style.backgroundColor = blue;  summaryBlock.style.backgroundColor = grey;
+    }else{
+        timeBlock.style.backgroundColor = blue; streamingsBlock.style.backgroundColor = blue; genresBlock.style.backgroundColor = blue;  summaryBlock.style.backgroundColor = blue;
+    }
+}
+
+function showSummary() {
+    const time = document.getElementById('time-slider').value;
+    
+    const platformsEl = document.querySelectorAll('#view-platforms .selected');
+    const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'Wszystkie';
+
+    const genresEl = document.querySelectorAll('#genre-grid .selected');
+    const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'Wszystkie';
+
+    const summaryTime = document.getElementById('summary-time');
+    const summaryPlatforms = document.getElementById('summary-platforms');
+    const summaryGenres = document.getElementById('summary-genres');
+
+    if(summaryTime) summaryTime.innerText = time;
+    if(summaryPlatforms) summaryPlatforms.innerText = platforms;
+    if(summaryGenres) summaryGenres.innerText = genres;
+    
+    nextView('view-summary');
 }
 
 async function fetchMovies() {
@@ -196,3 +230,4 @@ function createBackgroundIcons() {
 
 
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);
+

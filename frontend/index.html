@@ -32,15 +32,15 @@
     <!-- Kontener siatki -->
     <div class="timer-grid">
         <!-- Rząd 1: Ikony/Tekst -->
-        <div class="grid-item icon" onclick="nextView('view-time')">⏱️</div>
-        <div class="grid-item icon"  onclick="nextView('view-platforms')">🔴</div>
-        <div class="grid-item icon">REC</div>
-        <div class="grid-item icon"  onclick = "nextView('view-genres')">🎭</div>
+        <div class="grid-item icon" onclick="nextView('view-time')">Time</div>
+        <div class="grid-item icon" onclick="nextView('view-platforms')">Streamings</div>
+        <div class="grid-item icon" onclick="nextView('view-genres')">Genres</div>
+        <div class="grid-item icon" onclick="showSummary()">Summary</div>
 
-        <div class="grid-item block" onclick="nextView('view-time')">1</div>
-        <div class="grid-item block">1</div>
-        <div class="grid-item block" onclick = "nextView('view-genres')">1</div>
-        <div class="grid-item block" onclick="nextView('view-platforms')">1</div>
+        <div class="grid-item block" onclick="nextView('view-time')" id ="time-block">1</div>
+        <div class="grid-item block" onclick="nextView('view-platforms')" id = "streaming-block">1</div>
+        <div class="grid-item block" onclick="nextView('view-genres')" id="genres-block">1</div>
+        <div class="grid-item block" onclick="showSummary()" id ="summary-block">1</div>
     </div>
 </div>
         
@@ -88,8 +88,28 @@
                 <div class="option-card" data-id="878" onclick="toggleSelect(this)">Sci-Fi</div>
                 <div class="option-card" data-id="53" onclick="toggleSelect(this)">Thriller</div>
             </div>
-            <button class="btn-primary" onclick="fetchMovies()">Losuj film!</button>
+            <button class="btn-primary" onclick="showSummary()">Podsumowanie</button>
             <div class="go-back" onclick="nextView('view-platforms')">Wróć</div>
+        </div>
+
+        <div id="view-summary" class="view">
+            <h1>Podsumowanie</h1>
+            <div class="summary-container">
+                <div class="summary-item">
+                    <span class="summary-label">Czas do</span>
+                    <div class="summary-value"><span id="summary-time"></span> min</div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Platformy</span>
+                    <div class="summary-value" id="summary-platforms"></div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Gatunki</span>
+                    <div class="summary-value" id="summary-genres"></div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="fetchMovies()">Losuj film!</button>
+            <div class="go-back" onclick="nextView('view-genres')">Wróć</div>
         </div>
 
         <div id="view-result" class="view">
@@ -128,7 +148,7 @@
                 </ul>
                 <button class="btn-primary" onclick="toggleWatchlist()"
                     style="padding: 8px; font-size: 13px; margin-top: 15px; background: #333;">Zamknij</button>
-            </div>
+            </div>  
         </div>
     </div>
 

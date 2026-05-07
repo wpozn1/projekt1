@@ -40,7 +40,8 @@
 }
 
 .grid-item.icon {
-    font-size: 20px;
+    font-size: 10px;
+    color:grey;
     font-weight: 600;
     height: 30px;
     display: flex;
@@ -51,7 +52,7 @@
 .grid-item.block {
     width: 60px; 
     height: 60px; 
-    background-color: #0086b3;
+    background-color: grey;
     border-radius:10px;
     color: #0086b3;
     font-weight: bold;
@@ -503,4 +504,36 @@
         color:grey;
         margin-top:10px;
         font-size:12px;
+    }
+
+    .summary-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .summary-item {
+        background: var(--card-bg);
+        padding: 15px 20px;
+        border-radius: 12px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        border: 1px solid #333;
+    }
+
+    .summary-label {
+        color: var(--text-dim);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .summary-value {
+        color: var(--accent-color);
+        font-size: 18px;
+        font-weight: 700;
     }
