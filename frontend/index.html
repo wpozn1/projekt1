@@ -11,6 +11,27 @@
 
 <body>
 
+    <button class="login-btn-top" onclick="toggleModal()">Zaloguj się</button>
+
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal()">&times;</span>
+
+            <div id="authContainer">
+                <h2 id="modalTitle">Logowanie</h2>
+                <form id="authForm" onsubmit="handleAuth(event)">
+                    <input type="email" id="email" placeholder="Twój e-mail" required>
+                    <input type="password" id="password" placeholder="Hasło" required>
+                    <button type="submit" class="submit-btn" id="submitBtn">Zaloguj się</button>
+                </form>
+
+                <p class="switch-text">
+                    Nie masz konta? <a href="#" onclick="switchMode(event)">Zarejestruj się</a>
+                </p>
+            </div>
+        </div>
+    </div>
     <div class="bg-animation" id="bg-animation">
 
     </div>
