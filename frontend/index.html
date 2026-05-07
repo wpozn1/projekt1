@@ -11,6 +11,27 @@
 
 <body>
 
+    <button class="login-btn-top" onclick="toggleModal()">Zaloguj się</button>
+
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal()">&times;</span>
+
+            <div id="authContainer">
+                <h2 id="modalTitle">Logowanie</h2>
+                <form id="authForm" onsubmit="handleAuth(event)">
+                    <input type="email" id="email" placeholder="Twój e-mail" required>
+                    <input type="password" id="password" placeholder="Hasło" required>
+                    <button type="submit" class="submit-btn" id="submitBtn">Zaloguj się</button>
+                </form>
+
+                <p class="switch-text">
+                    Nie masz konta? <a href="#" onclick="switchMode(event)">Zarejestruj się</a>
+                </p>
+            </div>
+        </div>
+    </div>
     <div class="bg-animation" id="bg-animation">
 
     </div>
@@ -48,13 +69,13 @@
         </header>
 
         <div id="view-start" class="view active">
-        
-        <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
-        
-        <h1>StreamMatch</h1>
-        <p class="subtitle">Idealny film na idealny wieczór.<br>Odpowiedz na kilka pytań.</p>
-        <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
-    </div>
+
+            <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
+
+            <h1>StreamMatch</h1>
+            <p class="subtitle">Idealny film na idealny wieczór.<br>Odpowiedz na kilka pytań.</p>
+            <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
+        </div>
 
         <div id="view-time" class="view">
             <h1>Ile masz czasu?</h1>
@@ -63,9 +84,9 @@
             <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
             <div class="go-back" onclick="nextView('view-start')">Wróć</div>
         </div>
-        
+
         <div id="view-platforms" class="view">
-           
+
             <h1>Twoje platformy</h1>
             <p class="subtitle">Wybierz serwisy, które posiadasz</p>
             <div class="grid-options">
@@ -151,7 +172,11 @@
             </div>  
         </div>
     </div>
-
+    <div class="tmdb-mini-bar">
+        <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg"
+            alt="TMDB Logo">
+        <p>This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    </div>
     <script src="js/script.js"></script>
 </body>
 

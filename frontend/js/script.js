@@ -10,6 +10,48 @@ function updateTime(val) {
     const el = document.getElementById('time-val');
     if (el) el.innerText = val;
 }
+let isLoginMode = true;
+
+function toggleModal() {
+    const modal = document.getElementById('loginModal');
+    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function switchMode(e) {
+    e.preventDefault();
+    isLoginMode = !isLoginMode;
+
+    const title = document.getElementById('modalTitle');
+    const btn = document.getElementById('submitBtn');
+    const switchLink = e.target;
+
+    if (isLoginMode) {
+        title.innerText = 'Logowanie';
+        btn.innerText = 'Zaloguj się';
+        switchLink.innerText = 'Zarejestruj się';
+    } else {
+        title.innerText = 'Rejestracja';
+        btn.innerText = 'Stwórz konto';
+        switchLink.innerText = 'Masz już konto? Zaloguj się';
+    }
+}
+
+function handleAuth(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+
+    if (isLoginMode) {
+        console.log("Logowanie użytkownika:", email);
+
+    } else {
+        console.log("Rejestracja użytkownika:", email);
+
+    }
+
+    alert("Dane wysłane (sprawdź konsolę). Czas podpiąć bazę!");
+    toggleModal();
+}
 
 function toggleSelect(el) {
     el.classList.toggle('selected');
