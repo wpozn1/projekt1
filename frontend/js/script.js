@@ -1,6 +1,7 @@
 const API_KEY = '8294e370833db44041f30ab168f6cc83'; // to trzeba wyjebać stąd
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+const API_URL = 'http://127.0.0.1:8000/api/';
 
 let currentMovie = null;
 let watchlist = [];
@@ -49,8 +50,6 @@ function handleAuth(e) {
         console.log("Rejestracja użytkownika:", email);
 
     }
-
-    alert("Dane wysłane (sprawdź konsolę). Czas podpiąć bazę!");
     toggleModal();
 }
 
@@ -233,6 +232,92 @@ function createBackgroundIcons() {
 
 
         bgContainer.appendChild(item);
+    }
+}
+
+function toggleModal(){
+    const modal = document.getElementById('loginModal');
+    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex'
+}
+
+function switchMode(event) {
+    event.preventDefault();
+    isLoginMode = !isLoginMode;
+    
+    document.getElementById('modalTitle').innerText = isLoginMode ? 'Logowanie' : 'Rejestracja';
+    document.getElementById('submitBtn').innerText = isLoginMode ? 'Zaloguj się' : 'Zarejestruj się';
+    
+    const switchLink = event.target;
+    switchLink.innerText = isLoginMode ? 'Zarejestruj się' : 'Zaloguj się';
+    const pText = isLoginMode ? 'Nie masz konta? ' : 'Masz już konto? ';
+    switchLink.parentElement.firstChild.textContent = pText;
+}
+
+async function handleAuth(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (isLoginMode) {
+        await loginUser(email, password);
+    } else {
+        await registerUser(email, password);
+    }
+}
+
+async function handleAuth(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (isLoginMode) {
+        await loginUser(email, password);
+    } else {
+        await registerUser(email, password);
+    }
+}
+
+async function loginUser(email, password) {
+    const response = await fetch(`${API_URL}auth/jwt/create/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        localStorage.setItem('accessToken', data.access);
+        localStorage.setItem('refreshToken', data.refresh);
+        alert('Zalogowano!');
+        toggleModal();
+        location.reload();
+    } else {
+        alert('Błąd logowania: ' + (data.detail || 'Sprawdź dane'));
+    }
+}
+
+async function registerUser(email, password) {
+    const response = await fetch(`${API_URL}auth/users/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            email: email,
+            username: email.split('@')[0], 
+            password: password,
+            re_password: password 
+        })
+    });
+
+    if (response.ok) {
+        alert('Konto stworzone! Teraz możesz się zalogować.');
+        isLoginMode = false;
+        switchMode({ preventDefault: () => {} }); 
+    } else {
+        const data = await response.json();
+        alert('Błąd rejestracji: ' + JSON.stringify(data));
     }
 }
 
