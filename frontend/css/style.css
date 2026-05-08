@@ -595,6 +595,7 @@
         color: var(--accent-color);
         font-size: 18px;
         font-weight: 700;
+    }
     .tmdb-mini-bar img {
         height: 12px;
         width: auto;
