@@ -11,52 +11,52 @@ function updateTime(val) {
     if (el) el.innerText = val;
 }
 let isLoginMode = true;
-
+ 
 function toggleModal() {
     const modal = document.getElementById('loginModal');
     modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
 }
-
+ 
 function switchMode(e) {
     e.preventDefault();
     isLoginMode = !isLoginMode;
-
+ 
     const title = document.getElementById('modalTitle');
     const btn = document.getElementById('submitBtn');
     const switchLink = e.target;
-
+ 
     if (isLoginMode) {
-        title.innerText = 'Sign in';
+        title.innerText = 'Log in';
         btn.innerText = 'Log in';
         switchLink.innerText = 'Register';
     } else {
         title.innerText = 'Register';
-        btn.innerText = 'Create an account';
-        switchLink.innerText = 'Do you have an account? Log in';
+        btn.innerText = 'Create account';
+        switchLink.innerText = 'Already have an account? Log in';
     }
 }
-
+ 
 function handleAuth(e) {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
-
+ 
     if (isLoginMode) {
-        console.log("User's login:", email);
-
+        console.log("Logging in user:", email);
+ 
     } else {
-        console.log("User's register:", email);
-
+        console.log("Registering user:", email);
+ 
     }
-
-    alert("The data has been sent (check the console). Time to hook in the base!");
+ 
+    alert("Data sent (check console). Time to connect the database!");
     toggleModal();
 }
-
+ 
 function toggleSelect(el) {
     el.classList.toggle('selected');
 }
-
+ 
 function nextView(viewId) {
     const timeBlock = document.getElementById('time-block');
     const streamingsBlock = document.getElementById('streaming-block');
@@ -66,7 +66,7 @@ function nextView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
-
+ 
     const header = document.getElementById('main-header');
     if (header) {
         header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
@@ -82,49 +82,49 @@ function nextView(viewId) {
         timeBlock.style.backgroundColor = blue; streamingsBlock.style.backgroundColor = blue; genresBlock.style.backgroundColor = blue;  summaryBlock.style.backgroundColor = blue;
     }
 }
-
+ 
 function showSummary() {
     const time = document.getElementById('time-slider').value;
     
     const platformsEl = document.querySelectorAll('#view-platforms .selected');
     const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'All';
-
+ 
     const genresEl = document.querySelectorAll('#genre-grid .selected');
     const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'All';
-
+ 
     const summaryTime = document.getElementById('summary-time');
     const summaryPlatforms = document.getElementById('summary-platforms');
     const summaryGenres = document.getElementById('summary-genres');
-
+ 
     if(summaryTime) summaryTime.innerText = time;
     if(summaryPlatforms) summaryPlatforms.innerText = platforms;
     if(summaryGenres) summaryGenres.innerText = genres;
     
     nextView('view-summary');
 }
-
+ 
 async function fetchMovies() {
-
+ 
     if (drawCount >= MAX_DRAWS) {
-        alert("Osiągnięto limit 5 losowań.");
+        alert("You have reached the limit of 5 draws.");
         return;
     }
-
+ 
     const slider = document.getElementById('time-slider');
     const maxRuntime = slider ? slider.value : 110;
     const genreIds = Array.from(document.querySelectorAll('#genre-grid .selected'))
         .map(el => el.getAttribute('data-id')).join(',');
-
+ 
     const randomPage = Math.floor(Math.random() * 3) + 1;
-
+ 
     const filterParams = `&vote_average.gte=7.0&vote_count.gte=100&with_runtime.lte=${maxRuntime}&with_genres=${genreIds}`;
-
+ 
     const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-EN&sort_by=popularity.desc&include_adult=false&page=${randomPage}${filterParams}`;
-
+ 
     try {
         const response = await fetch(url);
         const data = await response.json();
-
+ 
         if (data.results && data.results.length > 0) {
             const randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
             drawCount++;
@@ -135,89 +135,80 @@ async function fetchMovies() {
                 const retryUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-EN&sort_by=popularity.desc&include_adult=false&page=1${filterParams}`;
                 const retryResponse = await fetch(retryUrl);
                 const retryData = await retryResponse.json();
-
+ 
                 if (retryData.results && retryData.results.length > 0) {
                     const randomMovie = retryData.results[0];
                     drawCount++;
                     updateDrawButton();
                     displayMovie(randomMovie);
                 } else {
-                    alert("No movies with the rating 7.0+ for this criteria.");
+                    alert("No movies with 7.0+ rating for these criteria.");
                 }
             } else {
-                alert("No movies with the rating 7.0+ for this criteria.");
+                alert("No movies with 7.0+ rating for these criteria.");
             }
         }
     } catch (error) {
-        console.error("Error API:", error);
+        console.error("API error:", error);
     }
 }
-
+ 
 function updateDrawButton() {
     const btn = document.getElementById('btn-draw-again');
-    const wybieramFilm = document.getElementById('wybieram-film');
-    wybieramFilm.addEventListener('click', () => {
-        movieSaved = true;
-        updateDrawButton();
-    });
+    
     if (!btn) return;
-
-    if (movieSaved) {
-        btn.disabled = true;
-        btn.innerText = "✅ You have chosen the movie!";
-        btn.style.opacity = "0.5";
-
-        return;
-    }
-
+ 
+ 
     const remaining = MAX_DRAWS - drawCount;
     btn.innerText = remaining > 0
         ? `🔄 Draw again (remaining: ${remaining})`
-        : "🚫 The limit has been reached";
-
+        : "🚫 Limit reached";
+ 
     if (remaining <= 0) {
         btn.style.opacity = "0.5";
         btn.disabled = true;
     }
 }
-
+ 
 function displayMovie(movie) {
     currentMovie = movie;
     document.getElementById('res-title').innerText = movie.title;
     document.getElementById('res-rating').innerText = `★ ${movie.vote_average.toFixed(1)}`;
-    document.getElementById('res-desc').innerText = movie.overview || "No description.";
-    document.getElementById('res-meta').innerText = `${movie.release_date ? movie.release_date.split('-')[0] : 'Brak daty'} • Film`;
-    const poster = movie.poster_path ? (IMG_URL + movie.poster_path) : 'https://via.placeholder.com/500x750?text=Brak+Okładki';
+    document.getElementById('res-desc').innerText = movie.overview || "No description available.";
+    document.getElementById('res-meta').innerText = `${movie.release_date ? movie.release_date.split('-')[0] : 'No date'} • Film`;
+    const poster = movie.poster_path ? (IMG_URL + movie.poster_path) : 'https://via.placeholder.com/500x750?text=No+Poster';
     document.getElementById('res-img').style.backgroundImage = `url('${poster}')`;
     nextView('view-result');
 }
-
+ 
 function saveMovie() {
-
+    const btn = document.getElementById('btn-draw-again');
     if (!currentMovie) return;
     if (watchlist.find(m => m.id === currentMovie.id)) {
         alert("This movie is already on your list!");
         return;
     }
-
-
-
+ 
     watchlist.push(currentMovie);
+    btn.disabled = true;
+    btn.innerText = "✅ You already chose your movie!";
+        btn.style.opacity = "0.5";
     updateWatchlistUI();
-
-
+    
 }
-
+ 
 function updateWatchlistUI() {
     const listEl = document.getElementById('watchlist-items');
     const countEl = document.getElementById('watchlist-count');
-
+    const moviePoster = document.getElementById('res2-img');
     if (watchlist.length === 0) {
-        listEl.innerHTML = '<p style="color: #666; font-size: 13px;">Lista jest pusta</p>';
+        moviePoster.style.display = 'none';
+        listEl.innerHTML = '<p style="color: #666; font-size: 13px;">Your list is empty</p>';
         countEl.style.display = 'none';
+
     } else {
         listEl.innerHTML = watchlist.map(m => {
-            const poster = m.poster_path ? (IMG_URL + m.poster_path) : 'https://via.placeholder.com/500x750?text=Brak+Okładki';
+            const poster = m.poster_path ? (IMG_URL + m.poster_path) : 'https://via.placeholder.com/500x750?text=No+Poster';
             return `
             <li>
                 <div class="watchlist-movie-img" style="background-image: url('${poster}')"></div>
@@ -226,50 +217,46 @@ function updateWatchlistUI() {
             </li>
             `;
         }).join('');
-
+ 
         countEl.innerText = watchlist.length;
         countEl.style.display = watchlist.length > 0 ? 'flex' : 'none';
     }
 }
-
+ 
 function toggleWatchlist() {
     const modal = document.getElementById('watchlist-modal');
     modal.classList.toggle('active');
 }
+ 
 function createBackgroundIcons() {
     const bgContainer = document.getElementById('bg-animation');
     const icons = ['🎬', '🍿', '⭐', '🎭', '🎥', '🎞️', '💎', '🌟'];
     const numberOfIcons = 20;
-
+ 
     for (let i = 0; i < numberOfIcons; i++) {
-
+ 
         const item = document.createElement('div');
         item.className = 'bg-item';
-
-
+ 
         const randomIcon = icons[Math.floor(Math.random() * icons.length)];
         item.innerText = randomIcon;
-
-
+ 
         const startPos = Math.random() * 100;
         const duration = 15 + Math.random() * 20;
         const delay = Math.random() * 20;
         const size = 25 + Math.random() * 40;
         const blurValue = Math.random() * 5 + 2;
-
-
+ 
         item.style.left = startPos + '%';
         item.style.fontSize = size + 'px';
         item.style.animationDuration = duration + 's';
         item.style.animationDelay = '-' + delay + 's';
         item.style.filter = `blur(${blurValue}px)`;
         item.style.opacity = Math.random() * 0.5 + 0.1;
-
-
+ 
         bgContainer.appendChild(item);
     }
 }
-
-
+ 
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);
-
+ 
