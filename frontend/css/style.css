@@ -23,7 +23,7 @@
         align-items: center;
         min-height: 100vh;
     }
- 
+    /* Główny kontener - wyrównujemy wszystko do lewej */
     .main-timer {
         display: flex;
         position: relative;
@@ -37,6 +37,31 @@
         gap: 10px 10px;
         justify-items: center;
         align-items: center;
+
+    }
+
+    .grid-item.icon {
+        font-size: 12px;
+        font-weight: 600;
+        color:grey;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .grid-item.block {
+        width: 60px;
+        height: 60px;
+        background-color: #0086b3;
+        border-radius: 10px;
+        color: #0086b3;
+        font-weight: bold;
+        font-size: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 6px;
     }
  
  .grid-item.icon {
@@ -534,6 +559,17 @@
         color: var(--accent-color);
         font-size: 18px;
         font-weight: 700;
+    }
+    .tmdb-mini-bar img {
+        height: 12px;
+        width: auto;
+    }
+
+    .tmdb-mini-bar p {
+        font-size: 10px;
+        margin: 0;
+        letter-spacing: 0.3px;
+        opacity: 0.7;
     }
  
     @media (max-width: 400px) {
