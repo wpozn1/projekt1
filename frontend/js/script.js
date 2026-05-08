@@ -311,9 +311,25 @@ async function registerUser(email, password) {
     }
 }
 
+function logoutUser() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
+    alert("Logged out successfully!");
+
+    location.reload();
+}
+
 async function loadMyMovies() {
     const token = localStorage.getItem('accessToken');
+    const loginBtn = document.querySelector('.login-btn-top');
+
     if (!token) return;
+
+    if (loginBtn) {
+        loginBtn.innerText = 'Log out';
+        loginBtn.onclick = logoutUser;
+    }
 
     try {
         const response = await fetch(`${API_URL}library/`, {
