@@ -80,7 +80,7 @@ class UserLibraryView(APIView):
             external_id=data.get('id'),
             defaults={
                 'title': data.get('title'),
-                'length': data.get('runtime'),
+                'length': data.get('runtime') or 0,
                 'genre': first_genre
             }
         )

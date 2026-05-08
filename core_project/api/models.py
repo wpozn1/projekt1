@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     genre = models.CharField(max_length=100)
-    lenght = models.IntegerField()
+    length = models.IntegerField()
     description = models.TextField(blank=True)
 
     external_id = models.IntegerField(unique=True, null=True, blank=True)
