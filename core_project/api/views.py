@@ -70,25 +70,25 @@ class UserLibraryView(APIView):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data)
     
-def post(self, request):
-    data = request.data
-    
-    genre_list = data.get('genres', [])
-    first_genre = genre_list[0].get('name') if genre_list else "Unknown"
+    def post(self, request):
+        data = request.data
+        
+        genre_list = data.get('genres', [])
+        first_genre = genre_list[0].get('name') if genre_list else "Unknown"
 
-    movie, created = Movie.objects.get_or_create(
-        external_id=data.get('id'),
-        defaults={
-            'title': data.get('title'),
-            'length': data.get('runtime'),
-            'genre': first_genre
-        }
-    )
-    
-    request.user.watched_movies.add(movie)
+        movie, created = Movie.objects.get_or_create(
+            external_id=data.get('id'),
+            defaults={
+                'title': data.get('title'),
+                'length': data.get('runtime'),
+                'genre': first_genre
+            }
+        )
+        
+        request.user.watched_movies.add(movie)
 
-    return Response({
-        "message": "Film dodany!",
-        "added_new_to_db": created
-    }, status=201)
+        return Response({
+            "message": "Film dodany!",
+            "added_new_to_db": created
+        }, status=201)
 

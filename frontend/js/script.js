@@ -157,20 +157,48 @@ function displayMovie(movie) {
     nextView('view-result');
 }
 
-function saveMovie() {
-
+async function saveMovie() {
     if (!currentMovie) return;
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        alert("Musisz się zalogować, aby zapisać film!");
+        toggleModal();
+        return;
+    }
+
     if (watchlist.find(m => m.id === currentMovie.id)) {
         alert("Ten film jest już na Twojej liście!");
         return;
     }
 
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/library/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: currentMovie.id,          
+                title: currentMovie.title,
+                runtime: currentMovie.runtime || 0, 
+                genres: currentMovie.genres || []  
+            })
+        });
 
-
-    watchlist.push(currentMovie);
-    updateWatchlistUI();
-
-
+        if (response.ok) {
+            watchlist.push(currentMovie);
+            updateWatchlistUI();
+            alert(`Film "${currentMovie.title}" został zapisany na Twoim koncie!`);
+        } else {
+            const errorData = await response.json();
+            alert("Błąd serwera: " + (errorData.detail || "Nie udało się zapisać filmu"));
+        }
+    } catch (error) {
+        console.error("Błąd połączenia z API:", error);
+        alert("Błąd sieci. Sprawdź, czy serwer Django działa.");
+    }
 }
 
 function updateWatchlistUI() {
