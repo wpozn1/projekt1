@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamMatch - Idealny film</title>
+    <title>StreamMatch - A Perfect Movie</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/script.js"></script>
@@ -12,7 +12,7 @@
 
 <body>
 
-    <button class="login-btn-top" onclick="toggleModal()">Zaloguj się</button>
+    <button class="login-btn-top" onclick="toggleModal()">Log in</button>
 
 
     <div id="loginModal" class="modal-overlay">
@@ -20,15 +20,15 @@
             <span class="close-btn" onclick="toggleModal()">&times;</span>
 
             <div id="authContainer">
-                <h2 id="modalTitle">Logowanie</h2>
+                <h2 id="modalTitle">Logging</h2>
                 <form id="authForm" onsubmit="handleAuth(event)">
                     <input type="email" id="email" placeholder="Twój e-mail" required>
                     <input type="password" id="password" placeholder="Hasło" required>
-                    <button type="submit" class="submit-btn" id="submitBtn">Zaloguj się</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">Log in</button>
                 </form>
 
                 <p class="switch-text">
-                    Nie masz konta? <a href="#" onclick="switchMode(event)">Zarejestruj się</a>
+                <a href="#" onclick="switchMode(event)">Register</a>
                 </p>
             </div>
         </div>
@@ -37,36 +37,22 @@
 
     </div>
     <div id="app">
-        <div id="watchlist-container">
-            <div id="watchlist-icon" onclick="toggleWatchlist()">
-                👁️<span id="watchlist-count">0</span>
-            </div>
-            <div id="watchlist-modal">
-                <h3>Twoja lista</h3>
-                <ul id="watchlist-items"></ul>
-                <button class="btn-primary" onclick="toggleWatchlist()"
-                    style="padding: 8px; font-size: 14px; margin-top: 10px;">Zamknij</button>
-            </div>
-        </div>
-
         <header id="main-header" style="display: none;">
             <div class="main-timer">
-                <!-- Kontener siatki -->
-                <div class="timer-grid">
-                    <!-- Rząd 1: Ikony/Tekst -->
-                    <div class="grid-item icon" onclick="nextView('view-time')">⏱️</div>
-                    <div class="grid-item icon" onclick="nextView('view-platforms')">🔴</div>
-                    <div class="grid-item icon">REC</div>
-                    <div class="grid-item icon" onclick="nextView('view-genres')">🎭</div>
+    <div class="timer-grid">
+        <div class="grid-item icon" onclick="nextView('view-time')">Time</div>
+        <div class="grid-item icon" onclick="nextView('view-platforms')">Streamings</div>
+        <div class="grid-item icon" onclick="nextView('view-genres')">Genres</div>
+        <div class="grid-item icon" onclick="showSummary()">Summary</div>
 
-                    <div class="grid-item block" onclick="nextView('view-time')">1</div>
-                    <div class="grid-item block">1</div>
-                    <div class="grid-item block" onclick="nextView('view-genres')">1</div>
-                    <div class="grid-item block" onclick="nextView('view-platforms')">1</div>
-                </div>
-            </div>
-
-
+        <div class="grid-item block" onclick="nextView('view-time')" id ="time-block">1</div>
+        <div class="grid-item block" onclick="nextView('view-platforms')" id = "streaming-block">1</div>
+        <div class="grid-item block" onclick="nextView('view-genres')" id="genres-block">1</div>
+        <div class="grid-item block" onclick="showSummary()" id ="summary-block">1</div>
+    </div>
+</div>
+        
+            
         </header>
 
         <div id="view-start" class="view active">
@@ -74,12 +60,12 @@
             <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
 
             <h1>StreamMatch</h1>
-            <p class="subtitle">Idealny film na idealny wieczór.<br>Odpowiedz na kilka pytań.</p>
-            <button class="btn-primary" onclick="nextView('view-time')">Zaczynamy!</button>
+            <p class="subtitle">Perfect movie for pefrect night.<br>Answer a few questions.</p>
+            <button class="btn-primary" onclick="nextView('view-time')">Let's start!</button>
         </div>
 
         <div id="view-time" class="view">
-            <h1>Ile masz czasu?</h1>
+            <h1>Duration of the movie</h1>
             <div class="time-display"><span id="time-val">110</span> min</div>
             <input type="range" min="60" max="240" value="110" id="time-slider" oninput="updateTime(this.value)">
             <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
@@ -88,30 +74,50 @@
 
         <div id="view-platforms" class="view">
 
-            <h1>Twoje platformy</h1>
-            <p class="subtitle">Wybierz serwisy, które posiadasz</p>
+            <h1>Your streamings</h1>
+            <p class="subtitle">Choose streamings that you own</p>
             <div class="grid-options">
                 <div class="option-card" onclick="toggleSelect(this)">Netflix</div>
                 <div class="option-card" onclick="toggleSelect(this)">HBO Max</div>
                 <div class="option-card" onclick="toggleSelect(this)">Disney+</div>
                 <div class="option-card" onclick="toggleSelect(this)">Prime Video</div>
             </div>
-            <button class="btn-primary" onclick="nextView('view-genres')">Dalej</button>
-            <div class="go-back" onclick="nextView('view-time')">Wróć</div>
+            <button class="btn-primary" onclick="nextView('view-genres')">Next</button>
+            <div class="go-back" onclick="nextView('view-time')">Return</div>
         </div>
 
         <div id="view-genres" class="view">
-            <h1>Wybierz gatunki</h1>
+            <h1>Choose your genres</h1>
             <div class="grid-options" id="genre-grid">
-                <div class="option-card" data-id="28" onclick="toggleSelect(this)">Akcja</div>
-                <div class="option-card" data-id="35" onclick="toggleSelect(this)">Komedia</div>
-                <div class="option-card" data-id="18" onclick="toggleSelect(this)">Dramat</div>
+                <div class="option-card" data-id="28" onclick="toggleSelect(this)">Action</div>
+                <div class="option-card" data-id="35" onclick="toggleSelect(this)">Comedy</div>
+                <div class="option-card" data-id="18" onclick="toggleSelect(this)">Drama</div>
                 <div class="option-card" data-id="27" onclick="toggleSelect(this)">Horror</div>
                 <div class="option-card" data-id="878" onclick="toggleSelect(this)">Sci-Fi</div>
                 <div class="option-card" data-id="53" onclick="toggleSelect(this)">Thriller</div>
             </div>
-            <button class="btn-primary" onclick="fetchMovies()">Losuj film!</button>
+            <button class="btn-primary" onclick="showSummary()">Podsumowanie</button>
             <div class="go-back" onclick="nextView('view-platforms')">Wróć</div>
+        </div>
+
+        <div id="view-summary" class="view">
+            <h1>Summary</h1>
+            <div class="summary-container">
+                <div class="summary-item">
+                    <span class="summary-label">Maximum duration</span>
+                    <div class="summary-value"><span id="summary-time"></span> min</div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Streamings</span>
+                    <div class="summary-value" id="summary-platforms"></div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Genres</span>
+                    <div class="summary-value" id="summary-genres"></div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="fetchMovies()">Draw a movie!</button>
+            <div class="go-back" onclick="nextView('view-genres')">Return</div>
         </div>
 
         <div id="view-result" class="view">
@@ -119,10 +125,10 @@
                 <div id="res-img" class="movie-img"></div>
                 <div class="movie-info">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <b id="res-title">Tytuł</b>
+                        <b id="res-title">Title</b>
                         <span id="res-rating">★ 0.0</span>
                     </div>
-                    <p id="res-meta">Rok • Czas</p>
+                    <p id="res-meta">Year • Duration</p>
                     <p id="res-desc"></p>
                 </div>
             </div>
@@ -132,8 +138,8 @@
             </button>
 
             <div class="result-actions">
-                <span onclick="saveMovie()" id="wybieram-film">✔️ Wybieram film</span>
-                <span onclick="location.reload()">↺ Od nowa</span>
+                <span onclick="saveMovie()" id="wybieram-film">✔️ I'm choosing this movie</span>
+                <span onclick="location.reload()">↺ Try again</span>
             </div>
 
         </div>
@@ -144,13 +150,13 @@
             <div id="watchlist-modal">
                 <h3
                     style="margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid var(--accent-color); padding-bottom: 5px;">
-                    Moja Lista</h3>
+                    My list</h3>
                 <div id="res2-img" class="watchlist-movie-img"></div>
                 <ul id="watchlist-items">
                 </ul>
                 <button class="btn-primary" onclick="toggleWatchlist()"
-                    style="padding: 8px; font-size: 13px; margin-top: 15px; background: #333;">Zamknij</button>
-            </div>
+                    style="padding: 8px; font-size: 13px; margin-top: 15px; background: #333;">Close</button>
+            </div>  
         </div>
     </div>
     <div class="tmdb-mini-bar">
