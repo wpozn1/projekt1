@@ -303,11 +303,11 @@
         position: relative;
         overflow: hidden;
         border-radius: 8px;
-        background-color: #000;
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
         object-fit: contain;
+        display:none;
     }
  
     .watchlist-movie-img::before {
@@ -548,6 +548,7 @@
     }
  
     .summary-label {
+        background: var(--card-bg);
         color: var(--text-dim);
         font-size: 13px;
         font-weight: 600;
@@ -613,7 +614,7 @@
     }
  
     .modal-content {
-        background: #0d253f;
+        background: #00a8e8;    
         padding: 30px;
         border-radius: 15px;
         width: 90%;
@@ -647,8 +648,9 @@
     }
  
     .submit-btn {
+        color: white;
         padding: 12px;
-        background: #90cea1;
+         background: #0d253f;
         border: none;
         border-radius: 5px;
         font-weight: bold;
@@ -656,11 +658,12 @@
     }
  
     .switch-text {
+         color: #0d253f;
         font-size: 13px;
         margin-top: 20px;
     }
  
     .switch-text a {
-        color: #01b4e4;
+        color: white;
         text-decoration: none;
     }
