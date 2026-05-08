@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Movie
+from models import User, Movie
 
 class MyUserAdmin(UserAdmin):
     filter_horizontal = ('watched_movies',)
