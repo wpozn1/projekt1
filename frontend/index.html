@@ -67,8 +67,8 @@
             <h1>Duration of the movie</h1>
             <div class="time-display"><span id="time-val">110</span> min</div>
             <input type="range" min="60" max="240" value="110" id="time-slider" oninput="updateTime(this.value)">
-            <button class="btn-primary" onclick="nextView('view-platforms')">Dalej</button>
-            <div class="go-back" onclick="nextView('view-start')">Wróć</div>
+            <button class="btn-primary" onclick="nextView('view-platforms')">Next</button>
+            <div class="go-back" onclick="nextView('view-start')">Go back</div>
         </div>
 
         <div id="view-platforms" class="view">
@@ -95,8 +95,8 @@
                 <div class="option-card" data-id="878" onclick="toggleSelect(this)">Sci-Fi</div>
                 <div class="option-card" data-id="53" onclick="toggleSelect(this)">Thriller</div>
             </div>
-            <button class="btn-primary" onclick="showSummary()">Podsumowanie</button>
-            <div class="go-back" onclick="nextView('view-platforms')">Wróć</div>
+            <button class="btn-primary" onclick="showSummary()">Summary</button>
+            <div class="go-back" onclick="nextView('view-platforms')">Go back</div>
         </div>
 
         <div id="view-summary" class="view">
@@ -133,7 +133,7 @@
             </div>
 
             <button class="btn-primary" id="btn-draw-again" style="margin-top: 20px;" onclick="fetchMovies()">
-                🔄 Losuj ponownie
+                🔄 Draw again
             </button>
 
             <div class="result-actions">
