@@ -14,45 +14,6 @@ function updateTime(val) {
 }
 let isLoginMode = true;
 
-function toggleModal() {
-    const modal = document.getElementById('loginModal');
-    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
-}
-
-function switchMode(e) {
-    e.preventDefault();
-    isLoginMode = !isLoginMode;
-
-    const title = document.getElementById('modalTitle');
-    const btn = document.getElementById('submitBtn');
-    const switchLink = e.target;
-
-    if (isLoginMode) {
-        title.innerText = 'Logowanie';
-        btn.innerText = 'Zaloguj się';
-        switchLink.innerText = 'Zarejestruj się';
-    } else {
-        title.innerText = 'Rejestracja';
-        btn.innerText = 'Stwórz konto';
-        switchLink.innerText = 'Masz już konto? Zaloguj się';
-    }
-}
-
-function handleAuth(e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-
-    if (isLoginMode) {
-        console.log("Logowanie użytkownika:", email);
-
-    } else {
-        console.log("Rejestracja użytkownika:", email);
-
-    }
-    toggleModal();
-}
-
 function toggleSelect(el) {
     el.classList.toggle('selected');
 }
@@ -240,8 +201,7 @@ function createBackgroundIcons() {
         item.className = 'bg-item';
 
 
-        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-        item.innerText = randomIcon;
+        item.innerText = icons[Math.floor(Math.random() * icons.length)];
 
 
         const startPos = Math.random() * 100;
@@ -277,21 +237,7 @@ function switchMode(event) {
     
     const switchLink = event.target;
     switchLink.innerText = isLoginMode ? 'Zarejestruj się' : 'Zaloguj się';
-    const pText = isLoginMode ? 'Nie masz konta? ' : 'Masz już konto? ';
-    switchLink.parentElement.firstChild.textContent = pText;
-}
-
-async function handleAuth(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (isLoginMode) {
-        await loginUser(email, password);
-    } else {
-        await registerUser(email, password);
-    }
+    switchLink.parentElement.firstChild.textContent = isLoginMode ? 'Nie masz konta? ' : 'Masz już konto? ';
 }
 
 async function handleAuth(event) {
