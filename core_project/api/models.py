@@ -7,6 +7,9 @@ class Movie(models.Model):
     length = models.IntegerField()
     description = models.TextField(blank=True)
 
+    poster_path = models.CharField(max_length=255, null=True, blank=True)
+    overview = models.TextField(null=True, blank=True)
+
     external_id = models.IntegerField(unique=True, null=True, blank=True)
 
     def __str__(self):

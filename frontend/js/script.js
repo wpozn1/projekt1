@@ -2,17 +2,18 @@ const API_KEY = '8294e370833db44041f30ab168f6cc83'; // to trzeba wyjebać stąd
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const API_URL = 'http://127.0.0.1:8000/api/';
+const MAX_DRAWS = 5;
 
 let currentMovie = null;
 let watchlist = [];
 let drawCount = 0;
-const MAX_DRAWS = 5;
 let movieSaved = false;
+let isLoginMode = true;
+
 function updateTime(val) {
     const el = document.getElementById('time-val');
     if (el) el.innerText = val;
 }
-let isLoginMode = true;
 
 function toggleSelect(el) {
     el.classList.toggle('selected');
@@ -144,7 +145,9 @@ async function saveMovie() {
                 id: currentMovie.id,          
                 title: currentMovie.title,
                 runtime: currentMovie.runtime || 0, 
-                genres: currentMovie.genres || []  
+                genres: currentMovie.genres || [],
+                poster_path: currentMovie.poster_path,
+                overview: currentMovie.overview,
             })
         });
 
@@ -163,6 +166,7 @@ async function saveMovie() {
 }
 
 function updateWatchlistUI() {
+    console.log("Zawartość watchlisty przed rysowaniem:", watchlist);
     const listEl = document.getElementById('watchlist-items');
     const countEl = document.getElementById('watchlist-count');
 
@@ -176,7 +180,6 @@ function updateWatchlistUI() {
             <li>
                 <div class="watchlist-movie-img" style="background-image: url('${poster}')"></div>
                 <div style="font-weight: 600;">${m.title}</div>
-                <div style="font-size: 11px; color: var(--text-dim);">${m.release_date ? m.release_date.split('-')[0] : 'N/A'}</div>
             </li>
             `;
         }).join('');
@@ -266,6 +269,8 @@ async function loginUser(email, password) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         alert('Zalogowano!');
+        localStorage.setItem('accessToken', data.access);
+        loadMyMovies();
         toggleModal();
         location.reload();
     } else {
@@ -295,5 +300,42 @@ async function registerUser(email, password) {
     }
 }
 
+async function loadMyMovies() {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) return;
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/library/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const moviesFromBackend = await response.json();
+
+            watchlist = moviesFromBackend.map(movie => {
+                return {
+                    id: movie.external_id,
+                    title: movie.title,
+                    poster_path: movie.poster_path,
+                    release_date: null,
+                };
+            });
+
+            updateWatchlistUI();
+            console.log("Library loaded from database");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadMyMovies();
+});
 
 window.addEventListener('DOMContentLoaded', createBackgroundIcons);

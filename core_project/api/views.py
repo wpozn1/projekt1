@@ -76,12 +76,15 @@ class UserLibraryView(APIView):
         genre_list = data.get('genres', [])
         first_genre = genre_list[0].get('name') if genre_list else "Unknown"
 
+
         movie, created = Movie.objects.get_or_create(
             external_id=data.get('id'),
             defaults={
                 'title': data.get('title'),
                 'length': data.get('runtime') or 0,
-                'genre': first_genre
+                'genre': first_genre,
+                'poster_path': data.get('poster_path'),
+                'overview': data.get('overview'),
             }
         )
         
