@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import RandomMovieView, UserLibraryView
+from views import RandomMovieView, UserLibraryView
 
 urlpatterns = [
     path('match/', RandomMovieView.as_view(), name='movie_match'),
