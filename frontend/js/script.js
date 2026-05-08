@@ -1,4 +1,4 @@
-const API_KEY = '8294e370833db44041f30ab168f6cc83'; // to trzeba wyjebać stąd
+const API_KEY = '8294e370833db44041f30ab168f6cc83'; // move this to backend .env
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 let currentMovie = null;
@@ -26,13 +26,13 @@ function switchMode(e) {
     const switchLink = e.target;
 
     if (isLoginMode) {
-        title.innerText = 'Logowanie';
-        btn.innerText = 'Zaloguj się';
-        switchLink.innerText = 'Zarejestruj się';
+        title.innerText = 'Sign in';
+        btn.innerText = 'Log in';
+        switchLink.innerText = 'Register';
     } else {
-        title.innerText = 'Rejestracja';
-        btn.innerText = 'Stwórz konto';
-        switchLink.innerText = 'Masz już konto? Zaloguj się';
+        title.innerText = 'Register';
+        btn.innerText = 'Create an account';
+        switchLink.innerText = 'Do you have an account? Log in';
     }
 }
 
@@ -42,14 +42,14 @@ function handleAuth(e) {
     const pass = document.getElementById('password').value;
 
     if (isLoginMode) {
-        console.log("Logowanie użytkownika:", email);
+        console.log("User's login:", email);
 
     } else {
-        console.log("Rejestracja użytkownika:", email);
+        console.log("User's register:", email);
 
     }
 
-    alert("Dane wysłane (sprawdź konsolę). Czas podpiąć bazę!");
+    alert("The data has been sent (check the console). Time to hook in the base!");
     toggleModal();
 }
 
@@ -87,10 +87,10 @@ function showSummary() {
     const time = document.getElementById('time-slider').value;
     
     const platformsEl = document.querySelectorAll('#view-platforms .selected');
-    const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'Wszystkie';
+    const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'All';
 
     const genresEl = document.querySelectorAll('#genre-grid .selected');
-    const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'Wszystkie';
+    const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'All';
 
     const summaryTime = document.getElementById('summary-time');
     const summaryPlatforms = document.getElementById('summary-platforms');
@@ -119,7 +119,7 @@ async function fetchMovies() {
 
     const filterParams = `&vote_average.gte=7.0&vote_count.gte=100&with_runtime.lte=${maxRuntime}&with_genres=${genreIds}`;
 
-    const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pl-PL&sort_by=popularity.desc&include_adult=false&page=${randomPage}${filterParams}`;
+    const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-EN&sort_by=popularity.desc&include_adult=false&page=${randomPage}${filterParams}`;
 
     try {
         const response = await fetch(url);
@@ -132,7 +132,7 @@ async function fetchMovies() {
             displayMovie(randomMovie);
         } else {
             if (randomPage > 1) {
-                const retryUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pl-PL&sort_by=popularity.desc&include_adult=false&page=1${filterParams}`;
+                const retryUrl = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-EN&sort_by=popularity.desc&include_adult=false&page=1${filterParams}`;
                 const retryResponse = await fetch(retryUrl);
                 const retryData = await retryResponse.json();
 
@@ -142,14 +142,14 @@ async function fetchMovies() {
                     updateDrawButton();
                     displayMovie(randomMovie);
                 } else {
-                    alert("Brak filmów z oceną 7.0+ dla tych kryteriów.");
+                    alert("No movies with the rating 7.0+ for this criteria.");
                 }
             } else {
-                alert("Brak filmów z oceną 7.0+ dla tych kryteriów.");
+                alert("No movies with the rating 7.0+ for this criteria.");
             }
         }
     } catch (error) {
-        console.error("Błąd API:", error);
+        console.error("Error API:", error);
     }
 }
 
@@ -164,7 +164,7 @@ function updateDrawButton() {
 
     if (movieSaved) {
         btn.disabled = true;
-        btn.innerText = "✅ Wybrałeś już swój film!";
+        btn.innerText = "✅ You have chosen the movie!";
         btn.style.opacity = "0.5";
 
         return;
@@ -172,8 +172,8 @@ function updateDrawButton() {
 
     const remaining = MAX_DRAWS - drawCount;
     btn.innerText = remaining > 0
-        ? `🔄 Losuj ponownie (zostało: ${remaining})`
-        : "🚫 Limit wyczerpany";
+        ? `🔄 Draw again (remaining: ${remaining})`
+        : "🚫 The limit has been reached";
 
     if (remaining <= 0) {
         btn.style.opacity = "0.5";
@@ -185,7 +185,7 @@ function displayMovie(movie) {
     currentMovie = movie;
     document.getElementById('res-title').innerText = movie.title;
     document.getElementById('res-rating').innerText = `★ ${movie.vote_average.toFixed(1)}`;
-    document.getElementById('res-desc').innerText = movie.overview || "Brak opisu w języku polskim.";
+    document.getElementById('res-desc').innerText = movie.overview || "No description.";
     document.getElementById('res-meta').innerText = `${movie.release_date ? movie.release_date.split('-')[0] : 'Brak daty'} • Film`;
     const poster = movie.poster_path ? (IMG_URL + movie.poster_path) : 'https://via.placeholder.com/500x750?text=Brak+Okładki';
     document.getElementById('res-img').style.backgroundImage = `url('${poster}')`;
@@ -196,7 +196,7 @@ function saveMovie() {
 
     if (!currentMovie) return;
     if (watchlist.find(m => m.id === currentMovie.id)) {
-        alert("Ten film jest już na Twojej liście!");
+        alert("This movie is already on your list!");
         return;
     }
 
