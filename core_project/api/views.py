@@ -4,6 +4,9 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .serializers import MovieSerializer
+from .models import Movie
 
 
 class RandomMovieView(APIView):
@@ -57,3 +60,38 @@ class RandomMovieView(APIView):
             return Response(
                 status=status.HTTP_502_BAD_GATEWAY
             )
+
+class UserLibraryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        movies = user.watched_movies.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        data = request.data
+        
+        genre_list = data.get('genres', [])
+        first_genre = genre_list[0].get('name') if genre_list else "Unknown"
+
+
+        movie, created = Movie.objects.get_or_create(
+            external_id=data.get('id'),
+            defaults={
+                'title': data.get('title'),
+                'length': data.get('runtime') or 0,
+                'genre': first_genre,
+                'poster_path': data.get('poster_path'),
+                'overview': data.get('overview'),
+            }
+        )
+        
+        request.user.watched_movies.add(movie)
+
+        return Response({
+            "message": "Film dodany!",
+            "added_new_to_db": created
+        }, status=201)
+
