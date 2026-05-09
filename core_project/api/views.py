@@ -21,13 +21,9 @@ class RandomMovieView(APIView):
 
         params = {
             'api_key': settings.TMDB_API_KEY,
-            'language': 'en-EN',
-            'watch_region': 'EN',
-            'with_genres': genre_id,
-            'with_watch_providers': provider_id,
-            'with_runtime.lte': max_length,
+            'language': 'en-US',
+            'watch_region': 'US',
             'sort_by': 'popularity.desc',
-            'page': random.randint(1, 5),
             'vote_average.gte': 7.0,
             'vote_count.gte': 100,
         }
