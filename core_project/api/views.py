@@ -36,16 +36,29 @@ class RandomMovieView(APIView):
             params['with_runtime.lte'] = max_length
 
         try:
-            response = requests.get(tmdb_url, params=params)
-            response.raise_for_status()
-            data = response.json()
+            params['page'] = 1
+            initial_response = requests.get(tmdb_url, params=params)
+            initial_response.raise_for_status()
+            data = initial_response.json()
+
+            total_pages = data.get('total_pages', 0)
+
+            if total_pages == 0:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            max_page = min(total_pages, 30)
+            random_page = random.randint(1, max_page)
+
+            if random_page > 1:
+                params['page'] = random_page
+                response = requests.get(tmdb_url, params=params)
+                response.raise_for_status()
+                data = response.json()
 
             movies = data.get('results', [])
 
             if not movies:
-                return Response(
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
             random_movie = random.choice(movies)
 
@@ -60,9 +73,7 @@ class RandomMovieView(APIView):
             }, status=status.HTTP_200_OK)
 
         except requests.RequestException:
-            return Response(
-                status=status.HTTP_502_BAD_GATEWAY
-            )
+            return Response(status=status.HTTP_502_BAD_GATEWAY)
 
 class UserLibraryView(APIView):
     permission_classes = [IsAuthenticated]
@@ -76,7 +87,7 @@ class UserLibraryView(APIView):
     def post(self, request):
         data = request.data
         
-        genre_ids = data.get('genres', [])
+        genre_ids = data.get('genres_ids', [])
         genre_str = str(genre_ids[0]) if genre_ids else "Unknown"
 
         movie, created = Movie.objects.get_or_create(
