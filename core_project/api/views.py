@@ -21,8 +21,8 @@ class RandomMovieView(APIView):
 
         params = {
             'api_key': settings.TMDB_API_KEY,
-            'language': 'pl-PL',
-            'watch_region': 'PL',
+            'language': 'en-EN',
+            'watch_region': 'EN',
             'with_genres': genre_id,
             'with_watch_providers': provider_id,
             'with_runtime.lte': max_length,
