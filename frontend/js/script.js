@@ -1,5 +1,3 @@
-const API_KEY = '8294e370833db44041f30ab168f6cc83';
-const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const API_URL = 'http://127.0.0.1:8000/api/';
 const MAX_DRAWS = 5;
