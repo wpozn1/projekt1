@@ -37,6 +37,43 @@ function showSummary() {
 
     nextView('view-summary');
 }
+function nextView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(viewId);
+    const timeBlock = document.getElementById('time-block');
+    const streamingBlock = document.getElementById('streaming-block');
+    const genresBlock = document.getElementById('genres-block');
+    const summaryBlock = document.getElementById('summary-block');
+    const blue = '#00a8e8';
+    const grey = '#36454F';
+    timeBlock.style.background = blue;
+    if (target) target.classList.add('active');
+
+    const header = document.getElementById('main-header');
+    if (header) {
+        header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
+    }
+    if(viewId === 'view-time'){
+        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
+        
+        = [grey,grey,grey]
+    }
+    else if(viewId === 'view-platforms'){
+        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
+        
+        = [blue,grey,grey]
+          
+    }
+    else if(viewId === 'view-genres'){
+        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
+        
+        = [blue,blue,grey]
+          
+    }else{
+        [streamingBlock, genresBlock, summaryBlock]
+  .forEach(el => el.style.backgroundColor = blue);
+    }
+}
 
 async function fetchMovies() {
     if (drawCount >= MAX_DRAWS) {
