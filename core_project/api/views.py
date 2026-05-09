@@ -9,7 +9,6 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import MovieSerializer
 from .models import Movie
 
-
 class RandomMovieView(APIView):
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
