@@ -5,20 +5,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import MovieSerializer
 from .models import Movie
 
-
 class RandomMovieView(APIView):
-    def post(self, request):
-        genre_id=request.data.get('genre')
-        provider_id=request.data.get('platform')
-        max_length=request.data.get('max_length')
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
-        if not all([genre_id, provider_id, max_length]):
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    def post(self, request):
+        genre_id=request.data.get('genre', '')
+        provider_id=request.data.get('platform', '')
+        max_length=request.data.get('max_length', 110)
 
         tmdb_url = "https://api.themoviedb.org/3/discover/movie"
 
@@ -32,6 +29,13 @@ class RandomMovieView(APIView):
             'sort_by': 'popularity.desc',
             'page': random.randint(1, 5),
         }
+
+        if genre_id:
+            params['with_genres'] = genre_id
+        if provider_id:
+            params['with_watch_providers'] = provider_id
+        if max_length:
+            params['with_runtime.lte'] = max_length
 
         try:
             response = requests.get(tmdb_url, params=params)
@@ -48,12 +52,13 @@ class RandomMovieView(APIView):
             random_movie = random.choice(movies)
 
             return Response({
+                "id": random_movie.get('id'),
                 "title": random_movie.get('title'),
                 "overview": random_movie.get('overview'),
                 "release_date": random_movie.get('release_date'),
-                "rating": random_movie.get('vote_average'),
-                "poster_url": f"https://image.tmdb.org/t/p/w500{random_movie.get('poster_path')}"
-                if random_movie.get('poster_path') else None,
+                "vote_average": random_movie.get('vote_average'),
+                "poster_path": random_movie.get('poster_path'),
+                "genre_ids": random_movie.get('genre_ids', []),
             }, status=status.HTTP_200_OK)
 
         except requests.RequestException:
@@ -73,16 +78,15 @@ class UserLibraryView(APIView):
     def post(self, request):
         data = request.data
         
-        genre_list = data.get('genres', [])
-        first_genre = genre_list[0].get('name') if genre_list else "Unknown"
-
+        genre_ids = data.get('genres', [])
+        genre_str = str(genre_ids[0]) if genre_ids else "Unknown"
 
         movie, created = Movie.objects.get_or_create(
             external_id=data.get('id'),
             defaults={
                 'title': data.get('title'),
                 'length': data.get('runtime') or 0,
-                'genre': first_genre,
+                'genre': genre_str,
                 'poster_path': data.get('poster_path'),
                 'overview': data.get('overview'),
             }
