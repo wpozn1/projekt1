@@ -157,11 +157,16 @@ async function saveMovie() {
 
     // TODO: Change to HTTPS Cookies before deploy
     const token = localStorage.getItem('accessToken');
+    const primaryBtn = document.querySelector('.btn-primary');
     if (!token) {
-        alert("You must log in to save a movie!");
-        toggleModal();
-        return;
+    btn.disabled = true;
+    btn.innerText = "🚫 You need to log in to continue!";
+    primaryBtn.style.opacity = "0.5";
+    btn.style.opacity = 0.5;
+    toggleModal();
+    return;
     }
+
 
     if (watchlist.find(m => m.id === currentMovie.id)) {
         alert("This movie is already on your list!");
@@ -199,7 +204,7 @@ async function saveMovie() {
             }
 
             updateWatchlistUI();
-            alert(`Movie "${currentMovie.title}" has been saved to your account!`);
+            
         } else {
             const errorData = await response.json();
             alert("Server error: " + (errorData.detail || "Failed to save the movie"));
