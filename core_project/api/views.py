@@ -5,11 +5,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import MovieSerializer
 from .models import Movie
 
 
 class RandomMovieView(APIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
     def post(self, request):
         genre_id=request.data.get('genre')
         provider_id=request.data.get('platform')
