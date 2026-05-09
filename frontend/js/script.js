@@ -18,16 +18,7 @@ function toggleSelect(el) {
     el.classList.toggle('selected');
 }
 
-function nextView(viewId) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const target = document.getElementById(viewId);
-    if (target) target.classList.add('active');
 
-    const header = document.getElementById('main-header');
-    if (header) {
-        header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
-    }
-}
 
 function showSummary() {
     const time = document.getElementById('time-slider').value;
