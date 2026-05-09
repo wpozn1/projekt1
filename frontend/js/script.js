@@ -135,7 +135,6 @@ async function saveMovie() {
         return;
     }
 
-    // Sprawdzenie po ID z TMDB
     if (watchlist.find(m => m.id === currentMovie.id)) {
         alert("This movie is already on your list!");
         return;
