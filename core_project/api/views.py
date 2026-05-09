@@ -28,6 +28,8 @@ class RandomMovieView(APIView):
             'with_runtime.lte': max_length,
             'sort_by': 'popularity.desc',
             'page': random.randint(1, 5),
+            'vote_average.gte': 7.0,
+            'vote_count.gte': 100,
         }
 
         if genre_id:
