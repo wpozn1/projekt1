@@ -12,6 +12,9 @@
 - **Genres**: Choose your favourite genres.
 - **Your list**: Store the movies that you have already picked and watched.
 
+  <img width="400" height="440" alt="ChatGPT Image 9 maj 2026, 14_42_06" src="https://github.com/user-attachments/assets/12212a76-da75-4c74-bbd1-86a8673c7838" />
+
+
 ---
 
 ## Tech Stack
