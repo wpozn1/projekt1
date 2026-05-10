@@ -14,7 +14,6 @@
 
   <img width="400" height="440" alt="ChatGPT Image 9 maj 2026, 14_42_06" src="https://github.com/user-attachments/assets/12212a76-da75-4c74-bbd1-86a8673c7838" />
 
-
 ---
 
 ## Tech Stack
@@ -36,4 +35,13 @@ Follow these steps to run the project locally:
    git clone https://github.com/WiJaMaKu/StreamMatch
    cd StreamMatch
    ```
-2. **Open the application via index.html**
+2. **Django (backend)**
+
+   ```bash
+   python -m venv venv
+   venv/Scripts/activate
+   cd core_project
+   python manage.py runserver
+   ```
+
+3. **Open the application via index.html**
