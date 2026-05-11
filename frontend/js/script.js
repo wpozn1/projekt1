@@ -16,8 +16,6 @@ function toggleSelect(el) {
     el.classList.toggle('selected');
 }
 
-
-
 function showSummary() {
     const time = document.getElementById('time-slider').value;
 
@@ -37,6 +35,7 @@ function showSummary() {
 
     nextView('view-summary');
 }
+
 function nextView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(viewId);
@@ -319,7 +318,7 @@ async function loginUser(email, password) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         alert('Logged in successfully!');
-        loadMyMovies();
+        await loadMyMovies();
         toggleModal();
         location.reload();
     } else {
