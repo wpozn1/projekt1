@@ -89,7 +89,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:63342",
     "http://localhost:5500",
-    "https://streammatch.vercel.app",
+    "https://stream-match-six.vercel.app",
 ]
 
 ROOT_URLCONF = 'core_project.urls'
