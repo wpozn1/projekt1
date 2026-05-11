@@ -3,7 +3,7 @@ const MAX_DRAWS = 5;
 
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://127.0.0.1:8000/api/'
-    : 'https://streammatch.onrender.com/api/';
+    : 'https://streammatch-f2b8.onrender.com/api/';
 
 let currentMovie = null;
 let watchlist = [];

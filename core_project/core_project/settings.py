@@ -17,7 +17,7 @@ DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'streammatch.onrender.com',
+    'streammatch-f2b8.onrender.com',
 ]
 
 if not DEBUG:
