@@ -16,6 +16,7 @@ DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = [
     'localhost',
+    '127.0.0.1',
     'streammatch.onrender.com',
 ]
 
@@ -86,7 +87,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
-    "http://localhots:63342",
+    "http://localhost:63342",
     "https://streammatch.vercel.app",
 ]
 
