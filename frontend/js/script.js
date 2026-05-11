@@ -79,7 +79,6 @@ function nextView(viewId) {
 
 async function fetchMovies() {
     if (drawCount >= MAX_DRAWS) {
-        alert("You have reached the limit of 5 draws.");
         return;
     }
 
@@ -110,15 +109,12 @@ async function fetchMovies() {
             drawCount++;
             updateDrawButton();
             displayMovie(randomMovie);
-        } else if (response.status === 404) {
-            alert("No movies found for these criteria.");
         } else {
             throw new Error(`Server returned status: ${response.status}`);
         }
 
     } catch (error) {
         console.error("API error:", error);
-        alert("Network error. Make sure your Django server is running!");
     }
 }
 
@@ -171,7 +167,6 @@ async function saveMovie() {
 
 
     if (watchlist.find(m => m.id === currentMovie.id)) {
-        alert("This movie is already on your list!");
         return;
     }
 
@@ -209,11 +204,9 @@ async function saveMovie() {
             
         } else {
             const errorData = await response.json();
-            alert("Server error: " + (errorData.detail || "Failed to save the movie"));
         }
     } catch (error) {
         console.error("API connection error:", error);
-        alert("Network error. Check if the Django server is running.");
     }
 }
 
@@ -320,7 +313,6 @@ async function loginUser(email, password) {
     if (response.ok) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
-        alert('Logged in successfully!');
         await loadMyMovies();
         toggleModal();
         location.reload();
@@ -342,7 +334,6 @@ async function registerUser(email, password) {
     });
 
     if (response.ok) {
-        alert('Account created! You can now log in.');
         isLoginMode = false;
         switchMode({ preventDefault: () => {} });
     } else {
@@ -355,7 +346,6 @@ function logoutUser() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
 
-    alert("Logged out successfully!");
     location.reload();
 }
 
