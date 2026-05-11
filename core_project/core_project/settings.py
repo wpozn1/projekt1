@@ -12,7 +12,10 @@ TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'streammatch.onrender.com',
+]
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
@@ -80,6 +83,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
+    "https://streammatch.vercel.app",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
