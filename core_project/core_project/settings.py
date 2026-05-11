@@ -88,6 +88,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:63342",
+    "http://localhost:5500",
     "https://streammatch.vercel.app",
 ]
 
