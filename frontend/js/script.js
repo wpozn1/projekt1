@@ -1,6 +1,9 @@
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const API_URL = 'http://127.0.0.1:8000/api/';
 const MAX_DRAWS = 5;
+
+const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+    ? 'http://127.0.0.1:8000/api/'
+    : 'https://streammatch.onrender.com/api/';
 
 let currentMovie = null;
 let watchlist = [];
@@ -15,8 +18,6 @@ function updateTime(val) {
 function toggleSelect(el) {
     el.classList.toggle('selected');
 }
-
-
 
 function showSummary() {
     const time = document.getElementById('time-slider').value;
@@ -37,6 +38,7 @@ function showSummary() {
 
     nextView('view-summary');
 }
+
 function nextView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(viewId);
@@ -181,10 +183,10 @@ async function saveMovie() {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                id: currentMovie.id,
+                external_id: currentMovie.id,
                 title: currentMovie.title,
-                runtime: currentMovie.runtime || 0,
-                genre_ids: currentMovie.genre_ids || [],
+                length: 0,
+                genre: currentMovie.genre_ids ? currentMovie.genre_ids.join(', ') : "Unknown",
                 poster_path: currentMovie.poster_path,
                 overview: currentMovie.overview,
             })
@@ -319,7 +321,7 @@ async function loginUser(email, password) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         alert('Logged in successfully!');
-        loadMyMovies();
+        await loadMyMovies();
         toggleModal();
         location.reload();
     } else {

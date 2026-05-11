@@ -3,7 +3,7 @@ import requests
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import MovieSerializer
@@ -75,36 +75,27 @@ class RandomMovieView(APIView):
         except requests.RequestException:
             return Response(status=status.HTTP_502_BAD_GATEWAY)
 
-class UserLibraryView(APIView):
+class UserLibraryView(generics.ListCreateAPIView):
+    serializer_class = MovieSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        movies = user.watched_movies.all()
-        serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request):
-        data = request.data
-        
-        genre_ids = data.get('genres_ids', [])
-        genre_str = str(genre_ids[0]) if genre_ids else "Unknown"
+    def get_queryset(self):
+        return self.request.user.watched_movies.all()
+
+    def perform_create(self, serializer):
+        data = serializer.validated_data
 
         movie, created = Movie.objects.get_or_create(
-            external_id=data.get('id'),
+            external_id=data.get('external_id'),
             defaults={
                 'title': data.get('title'),
-                'length': data.get('runtime') or 0,
-                'genre': genre_str,
-                'poster_path': data.get('poster_path'),
-                'overview': data.get('overview'),
+                'length': data.get('length') or 0,
+                'genre': data.get('genre') or "Unknown",
+                'poster_path': data.get('poster_path', ''),
+                'overview': data.get('overview', ''),
             }
         )
-        
-        request.user.watched_movies.add(movie)
 
-        return Response({
-            "message": "Film dodany!",
-            "added_new_to_db": created
-        }, status=201)
+        self.request.user.watched_movies.add(movie)
+
 
