@@ -39,8 +39,11 @@ Follow these steps to run the project locally:
 
    ```bash
    python -m venv venv
-   venv/Scripts/activate
+   ./venv/Scripts/activate
+   pip install -r requirements.txt
    cd core_project
+   python manage.py makemigrations
+   python manage.py migrate
    python manage.py runserver
    ```
 
