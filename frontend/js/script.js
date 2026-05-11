@@ -180,10 +180,10 @@ async function saveMovie() {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                id: currentMovie.id,
+                external_id: currentMovie.id,
                 title: currentMovie.title,
-                runtime: currentMovie.runtime || 0,
-                genre_ids: currentMovie.genre_ids || [],
+                length: 0,
+                genre: currentMovie.genre_ids ? currentMovie.genre_ids.join(', ') : "Unknown",
                 poster_path: currentMovie.poster_path,
                 overview: currentMovie.overview,
             })
