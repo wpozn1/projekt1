@@ -1,5 +1,5 @@
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const MAX_DRAWS = 5;
+const MAX_DRAWS = 3; 
 
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://127.0.0.1:8000/api/'
@@ -21,65 +21,56 @@ function toggleSelect(el) {
 
 function showSummary() {
     const time = document.getElementById('time-slider').value;
-
     const platformsEl = document.querySelectorAll('#view-platforms .selected');
-    const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'All';
-
+    const platforms = Array.from(platformsEl).map(el => el.innerText).join(', ') || 'Any';
     const genresEl = document.querySelectorAll('#genre-grid .selected');
-    const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'All';
+    const genres = Array.from(genresEl).map(el => el.innerText).join(', ') || 'Any';
 
-    const summaryTime = document.getElementById('summary-time');
-    const summaryPlatforms = document.getElementById('summary-platforms');
-    const summaryGenres = document.getElementById('summary-genres');
-
-    if(summaryTime) summaryTime.innerText = time;
-    if(summaryPlatforms) summaryPlatforms.innerText = platforms;
-    if(summaryGenres) summaryGenres.innerText = genres;
+    document.getElementById('summary-time').innerText = time;
+    document.getElementById('summary-platforms').innerText = platforms;
+    document.getElementById('summary-genres').innerText = genres;
 
     nextView('view-summary');
 }
 
 function nextView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const target = document.getElementById(viewId);
-    const timeBlock = document.getElementById('time-block');
-    const streamingBlock = document.getElementById('streaming-block');
-    const genresBlock = document.getElementById('genres-block');
-    const summaryBlock = document.getElementById('summary-block');
-    const blue = '#00a8e8';
-    const grey = '#36454F';
-    timeBlock.style.background = blue;
-    if (target) target.classList.add('active');
+    document.getElementById(viewId).classList.add('active');
 
     const header = document.getElementById('main-header');
-    if (header) {
-        header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
-    }
-    if(viewId === 'view-time'){
-        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
-        
-        = [grey,grey,grey]
-    }
-    else if(viewId === 'view-platforms'){
-        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
-        
-        = [blue,grey,grey]
-          
-    }
-    else if(viewId === 'view-genres'){
-        [streamingBlock.style.backgroundColor,genresBlock.style.backgroundColor,summaryBlock.style.backgroundColor] 
-        
-        = [blue,blue,grey]
-          
-    }else{
-        [streamingBlock, genresBlock, summaryBlock]
-  .forEach(el => el.style.backgroundColor = blue);
+    header.style.display = (viewId === 'view-start' || viewId === 'view-result') ? 'none' : 'block';
+
+    updateProgress(viewId);
+}
+
+function updateProgress(viewId) {
+    const blocks = {
+        'view-time': ['time-block'],
+        'view-platforms': ['time-block', 'streaming-block'],
+        'view-genres': ['time-block', 'streaming-block', 'genres-block'],
+        'view-summary': ['time-block', 'streaming-block', 'genres-block', 'summary-block']
+    };
+
+    document.querySelectorAll('.grid-item.block').forEach(el => el.style.backgroundColor = '#36454F');
+    
+    if (blocks[viewId]) {
+        blocks[viewId].forEach(id => {
+            const block = document.getElementById(id);
+            if(block) block.style.backgroundColor = 'var(--accent-color)';
+        });
     }
 }
 
 async function fetchMovies() {
-    if (drawCount >= MAX_DRAWS) {
-        return;
+    if (drawCount >= MAX_DRAWS) return;
+
+    let btn = document.querySelector('.view.active .btn-primary');
+    if (!btn) btn = document.getElementById('btn-draw-again');
+
+    const originalText = btn ? btn.innerText : "";
+    if(btn) {
+        btn.innerText = "Searching...";
+        btn.disabled = true;
     }
 
     const slider = document.getElementById('time-slider');
@@ -88,20 +79,15 @@ async function fetchMovies() {
     const genreIds = Array.from(document.querySelectorAll('#genre-grid .selected'))
         .map(el => el.getAttribute('data-id')).join(',');
 
+    // CRITICAL FIX: Changed join(',') to join('|') to use logical OR for streaming platforms
     const providerIds = Array.from(document.querySelectorAll('#view-platforms .selected'))
-        .map(el => el.getAttribute('data-id')).join(',');
+        .map(el => el.getAttribute('data-id')).join('|');
 
     try {
         const response = await fetch(`${API_URL}match/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                genre: genreIds,
-                platform: providerIds,
-                max_length: maxLength
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength })
         });
 
         if (response.ok) {
@@ -110,63 +96,61 @@ async function fetchMovies() {
             updateDrawButton();
             displayMovie(randomMovie);
         } else {
-            throw new Error(`Server returned status: ${response.status}`);
+            alert('No movies found. Try wider criteria!');
         }
-
     } catch (error) {
         console.error("API error:", error);
+    } finally {
+        if(btn) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            if(drawCount > 0) updateDrawButton();
+        }
     }
 }
 
 function updateDrawButton() {
     const btn = document.getElementById('btn-draw-again');
     if (!btn) return;
-
     const remaining = MAX_DRAWS - drawCount;
-    btn.innerText = remaining > 0
-        ? `🔄 Draw again (remaining: ${remaining})`
-        : "🚫 Limit reached";
-
-    if (remaining <= 0) {
-        btn.style.opacity = "0.5";
-        btn.disabled = true;
-    }
+    btn.innerText = remaining > 0 ? `Reroll (remaining: ${remaining})` : "Limit reached";
+    btn.disabled = remaining <= 0;
 }
 
 function displayMovie(movie) {
     currentMovie = movie;
-    document.getElementById('res-title').innerText = movie.title;
+    const titleEl = document.getElementById('res-title');
+    const ratingEl = document.getElementById('res-rating');
+    const descEl = document.getElementById('res-desc');
+    const metaEl = document.getElementById('res-meta');
+    const imgEl = document.getElementById('res-img');
 
-    const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'NR';
-    document.getElementById('res-rating').innerText = `★ ${rating}`;
-
-    document.getElementById('res-desc').innerText = movie.overview || "No description available.";
-    document.getElementById('res-meta').innerText = `${movie.release_date ? movie.release_date.split('-')[0] : 'No date'} • Film`;
+    if(titleEl) titleEl.innerText = movie.title;
+    if(ratingEl) ratingEl.innerText = `★ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'NR'}`;
+    if(descEl) descEl.innerText = movie.overview || "No description available.";
+    if(metaEl) metaEl.innerText = `${movie.release_date ? movie.release_date.split('-')[0] : 'No date'} • Movie`;
 
     const poster = movie.poster_path ? (IMG_URL + movie.poster_path) : 'https://placehold.co/500x750/222/FFF?text=No+Poster';
-    document.getElementById('res-img').style.backgroundImage = `url('${poster}')`;
+    if(imgEl) imgEl.style.backgroundImage = `url('${poster}')`;
+
+    const saveBtn = document.getElementById('wybieram-film');
+    if(saveBtn) {
+        saveBtn.innerText = "Add to Watchlist";
+        saveBtn.style.opacity = "1";
+        saveBtn.style.pointerEvents = "auto";
+    }
 
     nextView('view-result');
 }
 
 async function saveMovie() {
-    const btn = document.getElementById('btn-draw-again');
     if (!currentMovie) return;
-
-    // TODO: Change to HTTPS Cookies before deploy
     const token = localStorage.getItem('accessToken');
-    const primaryBtn = document.querySelector('.btn-primary');
+    const saveBtn = document.getElementById('wybieram-film');
+
     if (!token) {
-    btn.disabled = true;
-    btn.innerText = "🚫 You need to log in to continue!";
-    primaryBtn.style.opacity = "0.5";
-    btn.style.opacity = 0.5;
-    toggleModal();
-    return;
-    }
-
-
-    if (watchlist.find(m => m.id === currentMovie.id)) {
+        alert("Log in to save!");
+        toggleModal();
         return;
     }
 
@@ -188,25 +172,16 @@ async function saveMovie() {
         });
 
         if (response.ok) {
-            watchlist.push({
-                id: currentMovie.id,
-                title: currentMovie.title,
-                poster_path: currentMovie.poster_path
-            });
-
-            if(btn) {
-                btn.disabled = true;
-                btn.innerText = "✅ You already chose your movie!";
-                btn.style.opacity = "0.5";
+            watchlist.push({ id: currentMovie.id, title: currentMovie.title, poster_path: currentMovie.poster_path });
+            if(saveBtn) {
+                saveBtn.innerText = "Saved!";
+                saveBtn.style.opacity = "0.5";
+                saveBtn.style.pointerEvents = "none";
             }
-
             updateWatchlistUI();
-            
-        } else {
-            const errorData = await response.json();
         }
     } catch (error) {
-        console.error("API connection error:", error);
+        console.error("Save error:", error);
     }
 }
 
@@ -214,64 +189,31 @@ function updateWatchlistUI() {
     const listEl = document.getElementById('watchlist-items');
     const countEl = document.getElementById('watchlist-count');
 
+    if (!listEl || !countEl) return;
+
     if (watchlist.length === 0) {
-        if(listEl) listEl.innerHTML = '<p style="color: #666; font-size: 13px;">Your list is empty</p>';
-        if(countEl) countEl.style.display = 'none';
+        listEl.innerHTML = '<p style="color: #666; font-size: 13px; text-align:center;">Your list is empty</p>';
+        countEl.style.display = 'none';
     } else {
-        if(listEl) {
-            listEl.innerHTML = watchlist.map(m => {
-                const poster = m.poster_path ? (IMG_URL + m.poster_path) : 'https://placehold.co/100x150/222/FFF?text=No+Poster';
-                return `
-                <li style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #333;">
-                    <img src="${poster}" alt="${m.title}" style="width: 50px; height: 75px; border-radius: 5px; object-fit: cover;">
-                    <div style="font-weight: 600; font-size: 14px;">${m.title}</div>
-                </li>
-                `;
-            }).join('');
-        }
-
-        if(countEl) {
-            countEl.innerText = watchlist.length;
-            countEl.style.display = watchlist.length > 0 ? 'flex' : 'none';
-        }
+        listEl.innerHTML = watchlist.map(m => {
+            const poster = m.poster_path ? (IMG_URL + m.poster_path) : 'https://placehold.co/100x150/222/FFF?text=No+Poster';
+            return `
+            <li style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333;">
+                <img src="${poster}" alt="${m.title}" style="width: 50px; height: 75px; border-radius: 8px; object-fit: cover;">
+                <div style="font-weight: 600; font-size: 14px;">${m.title}</div>
+            </li>`;
+        }).join('');
+        countEl.innerText = watchlist.length;
+        countEl.style.display = 'flex';
     }
 }
 
-function toggleWatchlist() {
+function toggleWatchlist() { 
     const modal = document.getElementById('watchlist-modal');
-    if(modal) modal.classList.toggle('active');
+    if(modal) modal.classList.toggle('active'); 
 }
 
-function createBackgroundIcons() {
-    const bgContainer = document.getElementById('bg-animation');
-    if (!bgContainer) return;
-
-    const icons = ['🎬', '🍿', '⭐', '🎭', '🎥', '🎞️', '💎', '🌟'];
-    const numberOfIcons = 20;
-
-    for (let i = 0; i < numberOfIcons; i++) {
-        const item = document.createElement('div');
-        item.className = 'bg-item';
-        item.innerText = icons[Math.floor(Math.random() * icons.length)];
-
-        const startPos = Math.random() * 100;
-        const duration = 15 + Math.random() * 20;
-        const delay = Math.random() * 20;
-        const size = 25 + Math.random() * 40;
-        const blurValue = Math.random() * 5 + 2;
-
-        item.style.left = startPos + '%';
-        item.style.fontSize = size + 'px';
-        item.style.animationDuration = duration + 's';
-        item.style.animationDelay = '-' + delay + 's';
-        item.style.filter = `blur(${blurValue}px)`;
-        item.style.opacity = Math.random() * 0.5 + 0.1;
-
-        bgContainer.appendChild(item);
-    }
-}
-
-function toggleModal(){
+function toggleModal() {
     const modal = document.getElementById('loginModal');
     if(modal) modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
@@ -279,117 +221,86 @@ function toggleModal(){
 function switchMode(event) {
     event.preventDefault();
     isLoginMode = !isLoginMode;
-
-    document.getElementById('modalTitle').innerText = isLoginMode ? 'Log in' : 'Register';
-    document.getElementById('submitBtn').innerText = isLoginMode ? 'Log in' : 'Register';
-
-    const switchLink = event.target;
-    switchLink.innerText = isLoginMode ? 'Register' : 'Log in';
-    switchLink.parentElement.firstChild.textContent = isLoginMode ? "Don't have an account? " : 'Already have an account? ';
+    const title = document.getElementById('modalTitle');
+    const btn = document.getElementById('submitBtn');
+    if(title) title.innerText = isLoginMode ? 'Log in' : 'Register';
+    if(btn) btn.innerText = isLoginMode ? 'Log in' : 'Register';
+    const link = event.target;
+    if(link) {
+        link.innerText = isLoginMode ? 'Register' : 'Log in';
+        if(link.previousElementSibling) link.previousElementSibling.textContent = isLoginMode ? "Don't have an account?" : "Already have an account?";
+    }
 }
 
 async function handleAuth(event) {
     event.preventDefault();
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (isLoginMode) {
-        await loginUser(email, password);
-    } else {
-        await registerUser(email, password);
-    }
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+    if(!emailEl || !passEl) return;
+    const email = emailEl.value;
+    const password = passEl.value;
+    if (isLoginMode) await loginUser(email, password); else await registerUser(email, password);
 }
 
 async function loginUser(email, password) {
-    const response = await fetch(`${API_URL}auth/jwt/create/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-        localStorage.setItem('accessToken', data.access);
-        localStorage.setItem('refreshToken', data.refresh);
-        await loadMyMovies();
-        toggleModal();
-        location.reload();
-    } else {
-        alert('Login error: ' + (data.detail || 'Check your credentials'));
-    }
+    const btn = document.getElementById('submitBtn');
+    if(btn) btn.innerText = "Please wait...";
+    try {
+        const response = await fetch(`${API_URL}auth/jwt/create/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('accessToken', data.access);
+            localStorage.setItem('refreshToken', data.refresh);
+            await loadMyMovies();
+            toggleModal();
+        } else alert('Error: ' + (data.detail || 'Check data'));
+    } catch(e) { alert("Server error"); }
+    finally { if(btn) btn.innerText = isLoginMode ? "Log in" : "Register"; }
 }
 
 async function registerUser(email, password) {
-    const response = await fetch(`${API_URL}auth/users/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: email,
-            username: email.split('@')[0],
-            password: password,
-            re_password: password
-        })
-    });
-
-    if (response.ok) {
-        isLoginMode = false;
-        switchMode({ preventDefault: () => {} });
-    } else {
-        const data = await response.json();
-        alert('Registration error: ' + JSON.stringify(data));
-    }
+    try {
+        const response = await fetch(`${API_URL}auth/users/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, username: email.split('@')[0], password, re_password: password })
+        });
+        if (response.ok) {
+            alert("Registered! Now log in.");
+            switchMode({ preventDefault: () => {}, target: document.querySelector('.switch-text a') });
+        } else {
+            const data = await response.json();
+            alert('Error: ' + JSON.stringify(data));
+        }
+    } catch(e) { alert("Server error"); }
 }
 
 function logoutUser() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-
     location.reload();
 }
 
 async function loadMyMovies() {
     const token = localStorage.getItem('accessToken');
     const loginBtn = document.querySelector('.login-btn-top');
-
     if (!token) return;
-
-    if (loginBtn) {
-        loginBtn.innerText = 'Log out';
-        loginBtn.onclick = logoutUser;
-    }
-
+    if (loginBtn) { loginBtn.innerText = 'Log out'; loginBtn.onclick = logoutUser; }
     try {
         const response = await fetch(`${API_URL}library/`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });
-
         if (response.ok) {
-            const moviesFromBackend = await response.json();
-
-            watchlist = moviesFromBackend.map(movie => {
-                return {
-                    id: movie.external_id,
-                    title: movie.title,
-                    poster_path: movie.poster_path,
-                };
-            });
-
+            const data = await response.json();
+            watchlist = data.map(m => ({ id: m.external_id, title: m.title, poster_path: m.poster_path }));
             updateWatchlistUI();
-            console.log("Library loaded from database");
         }
-    } catch (error) {
-        console.error("Error fetching library:", error);
-    }
+    } catch (e) { console.error("Load error:", e); }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadMyMovies();
-});
-
-window.addEventListener('DOMContentLoaded', createBackgroundIcons);
+document.addEventListener('DOMContentLoaded', () => { loadMyMovies(); });

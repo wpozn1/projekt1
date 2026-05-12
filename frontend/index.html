@@ -1,66 +1,51 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamMatch - A Perfect Movie</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js"></script>
 </head>
-
 <body>
-
     <button class="login-btn-top" onclick="toggleModal()">Log in</button>
-
 
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-btn" onclick="toggleModal()">&times;</span>
-
             <div id="authContainer">
-                <h2 id="modalTitle">Logging</h2>
+                <h2 id="modalTitle">Log in</h2>
                 <form id="authForm" onsubmit="handleAuth(event)">
                     <input type="email" id="email" placeholder="Your email" required>
                     <input type="password" id="password" placeholder="Password" required>
                     <button type="submit" class="submit-btn" id="submitBtn">Log in</button>
                 </form>
-
                 <p class="switch-text">
-                <a href="#" onclick="switchMode(event)">Register</a>
+                    <span>Don't have an account?</span><a href="#" onclick="switchMode(event)">Register</a>
                 </p>
             </div>
         </div>
     </div>
-    <div class="bg-animation" id="bg-animation">
 
-    </div>
     <div id="app">
-        <header id="main-header" style="display: none;">
+        <header id="main-header" class="main-header" style="display: none;">
             <div class="main-timer">
-    <div class="timer-grid">
-        <div class="grid-item icon" onclick="nextView('view-time')">Time</div>
-        <div class="grid-item icon" onclick="nextView('view-platforms')">Streamings</div>
-        <div class="grid-item icon" onclick="nextView('view-genres')">Genres</div>
-        <div class="grid-item icon" onclick="showSummary()">Summary</div>
-
-        <div class="grid-item block" onclick="nextView('view-time')" id ="time-block">1</div>
-        <div class="grid-item block" onclick="nextView('view-platforms')" id = "streaming-block">1</div>
-        <div class="grid-item block" onclick="nextView('view-genres')" id="genres-block">1</div>
-        <div class="grid-item block" onclick="showSummary()" id ="summary-block">1</div>
-    </div>
-</div>
-        
-            
+                <div class="timer-grid">
+                    <div class="grid-item icon" onclick="nextView('view-time')">Time</div>
+                    <div class="grid-item icon" onclick="nextView('view-platforms')">Stream</div>
+                    <div class="grid-item icon" onclick="nextView('view-genres')">Genres</div>
+                    <div class="grid-item icon" onclick="showSummary()">Sumup</div>
+                    <div class="grid-item block" onclick="nextView('view-time')" id="time-block"></div>
+                    <div class="grid-item block" onclick="nextView('view-platforms')" id="streaming-block"></div>
+                    <div class="grid-item block" onclick="nextView('view-genres')" id="genres-block"></div>
+                    <div class="grid-item block" onclick="showSummary()" id="summary-block"></div>
+                </div>
+            </div>
         </header>
 
         <div id="view-start" class="view active">
-
-            <div style="font-size: 60px; margin-bottom: 20px;">🎬</div>
-
             <h1>StreamMatch</h1>
-            <p class="subtitle">Perfect movie for pefrect night.<br>Answer a few questions.</p>
+            <p class="subtitle">Perfect movie for perfect night.<br>Answer a few questions.</p>
             <button class="btn-primary" onclick="nextView('view-time')">Let's start!</button>
         </div>
 
@@ -73,14 +58,13 @@
         </div>
 
         <div id="view-platforms" class="view">
-
             <h1>Your streamings</h1>
             <p class="subtitle">Choose streamings that you own</p>
             <div class="grid-options">
-                <div class="option-card" onclick="toggleSelect(this)">Netflix</div>
-                <div class="option-card" onclick="toggleSelect(this)">HBO Max</div>
-                <div class="option-card" onclick="toggleSelect(this)">Disney+</div>
-                <div class="option-card" onclick="toggleSelect(this)">Prime Video</div>
+                <div class="option-card" data-id="8" onclick="toggleSelect(this)">Netflix</div>
+                <div class="option-card" data-id="1899|384" onclick="toggleSelect(this)">Max (HBO)</div>
+                <div class="option-card" data-id="337" onclick="toggleSelect(this)">Disney+</div>
+                <div class="option-card" data-id="9|119" onclick="toggleSelect(this)">Prime Video</div>
             </div>
             <button class="btn-primary" onclick="nextView('view-genres')">Next</button>
             <div class="go-back" onclick="nextView('view-time')">Return</div>
@@ -124,47 +108,40 @@
             <div class="movie-card">
                 <div id="res-img" class="movie-img"></div>
                 <div class="movie-info">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <b id="res-title">Title</b>
-                        <span id="res-rating">★ 0.0</span>
+                    <div class="movie-header">
+                        <h2 id="res-title">Title</h2>
+                        <span id="res-rating" class="rating-badge">★ 0.0</span>
                     </div>
                     <p id="res-meta">Year • Duration</p>
                     <p id="res-desc"></p>
                 </div>
             </div>
-
-            <button class="btn-primary" id="btn-draw-again" style="margin-top: 20px;" onclick="fetchMovies()">
-                🔄 Draw again
+            <button class="btn-primary" id="btn-draw-again" style="margin-top: 15px;" onclick="fetchMovies()">
+                Reroll
             </button>
-
             <div class="result-actions">
-                <span onclick="saveMovie()" id="wybieram-film">✔️ I'm choosing this movie</span>
-                <span onclick="location.reload()">↺ Try again</span>
+                <span class="action-btn save" onclick="saveMovie()" id="wybieram-film">Add to Watchlist</span>
+                <span class="action-btn reset" onclick="location.reload()">Start Over</span>
             </div>
-
         </div>
+
         <div id="watchlist-container">
             <div id="watchlist-icon" onclick="toggleWatchlist()">
-                👁️<span id="watchlist-count">0</span>
+                List<span id="watchlist-count">0</span>
             </div>
             <div id="watchlist-modal">
-                <h3
-                    style="margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid var(--accent-color); padding-bottom: 5px;">
-                    My list</h3>
-                <div id="res2-img" class="watchlist-movie-img"></div>
-                <ul id="watchlist-items">
-                </ul>
-                <button class="btn-primary" onclick="toggleWatchlist()"
-                    style="padding: 8px; font-size: 13px; margin-top: 15px; background: #333;">Close</button>
+                <h3 class="watchlist-title">My list</h3>
+                <ul id="watchlist-items"></ul>
+                <button class="btn-primary close-watchlist" onclick="toggleWatchlist()">Close</button>
             </div>  
         </div>
     </div>
+
     <div class="tmdb-mini-bar">
-        <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg"
-            alt="TMDB Logo">
+        <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB Logo">
         <p>This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
     </div>
 
+    <script src="js/script.js"></script>
 </body>
-
 </html>
