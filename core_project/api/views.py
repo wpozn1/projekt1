@@ -29,9 +29,9 @@ class RandomMovieView(APIView):
         }
 
         if genre_id:
-            params['with_genres'] = genre_id
+            params['with_genres'] = str(genre_id).replace(',','|')
         if provider_id:
-            params['with_watch_providers'] = provider_id
+            params['with_watch_providers'] = str(provider_id).replace(',', '|')
         if max_length:
             params['with_runtime.lte'] = max_length
 
@@ -78,7 +78,7 @@ class RandomMovieView(APIView):
 class UserLibraryView(generics.ListCreateAPIView):
     serializer_class = MovieSerializer
     permission_classes = [IsAuthenticated]
-
+    
     def get_queryset(self):
         return self.request.user.watched_movies.all()
 
