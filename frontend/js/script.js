@@ -61,9 +61,14 @@ function updateProgress(viewId) {
     }
 }
 
+let drawnMovieIds = [];
+
 async function fetchMovies(e) {
 
-    if (e) e.preventDefault(); 
+    if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    }
 
     if (drawCount >= MAX_DRAWS) return;
 
@@ -87,15 +92,34 @@ async function fetchMovies(e) {
     const providerIds = Array.from(document.querySelectorAll('#view-platforms .selected'))
         .map(el => el.getAttribute('data-id')).join('|');
 
+    const token = localStorage.getItem('accessToken');
+
+    const headers = {'Content-Type': 'application/json'};
+
+    if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
         const response = await fetch(`${API_URL}match/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength })
+            headers: headers,
+            credentials: 'include',
+            body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength, excluded: drawnMovieIds})
         });
 
         if (response.ok) {
             const randomMovie = await response.json();
+
+            if (randomMovie.is_fallback) {
+                            if (drawCount > 0) {
+                                alert("Pula unikalnych filmów z Twoimi filtrami się skończyła! Pokazuję losowy hit spoza listy.");
+                            }
+                            
+                            drawnMovieIds = []; 
+                        } else {
+                            drawnMovieIds.push(String(randomMovie.id));
+                        }
             drawCount++;
             updateDrawButton();
             displayMovie(randomMovie);
