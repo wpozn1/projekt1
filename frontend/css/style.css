@@ -210,7 +210,6 @@ input[type=range] { width: 100%; max-width: 400px; accent-color: var(--accent-co
 .watchlist-title { margin-bottom: 12px; font-size: 16px; color: var(--accent-color); border-bottom: 1px solid #333; padding-bottom: 8px; }
 .close-watchlist { margin-top: 10px; padding: 10px; font-size: 13px;}
 
-/* MODERN GLASSMORPHISM MODAL */
 .modal-overlay { 
     display: none; 
     position: fixed; 

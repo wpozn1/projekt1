@@ -79,7 +79,6 @@ async function fetchMovies() {
     const genreIds = Array.from(document.querySelectorAll('#genre-grid .selected'))
         .map(el => el.getAttribute('data-id')).join(',');
 
-    // CRITICAL FIX: Changed join(',') to join('|') to use logical OR for streaming platforms
     const providerIds = Array.from(document.querySelectorAll('#view-platforms .selected'))
         .map(el => el.getAttribute('data-id')).join('|');
 
