@@ -46,14 +46,14 @@
         <div id="view-start" class="view active">
             <h1>StreamMatch</h1>
             <p class="subtitle">Perfect movie for perfect night.<br>Answer a few questions.</p>
-            <button class="btn-primary" onclick="nextView('view-time')">Let's start!</button>
+            <button type="button" class="btn-primary" onclick="nextView('view-time')">Let's start!</button>
         </div>
 
         <div id="view-time" class="view">
             <h1>Duration of the movie</h1>
             <div class="time-display"><span id="time-val">110</span> min</div>
             <input type="range" min="60" max="240" value="110" id="time-slider" oninput="updateTime(this.value)">
-            <button class="btn-primary" onclick="nextView('view-platforms')">Next</button>
+            <button type="button" class="btn-primary" onclick="nextView('view-platforms')">Next</button>
             <div class="go-back" onclick="nextView('view-start')">Go back</div>
         </div>
 
@@ -100,7 +100,7 @@
                     <div class="summary-value" id="summary-genres"></div>
                 </div>
             </div>
-            <button class="btn-primary" onclick="fetchMovies()">Draw a movie!</button>
+            <button type="button" class="btn-primary" onclick="fetchMovies(event)">Draw a movie!</button>
             <div class="go-back" onclick="nextView('view-genres')">Return</div>
         </div>
 
@@ -116,7 +116,7 @@
                     <p id="res-desc"></p>
                 </div>
             </div>
-            <button class="btn-primary" id="btn-draw-again" style="margin-top: 15px;" onclick="fetchMovies()">
+            <button type="button" class="btn-primary" id="btn-draw-again" style="margin-top: 15px;" onclick="fetchMovies(event)">
                 Reroll
             </button>
             <div class="result-actions">

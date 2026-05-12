@@ -61,7 +61,12 @@ function updateProgress(viewId) {
     }
 }
 
-async function fetchMovies() {
+async function fetchMovies(e) {
+
+    if (e) e.preventDefault(); 
+
+    if (drawCount >= MAX_DRAWS) return;
+
     if (drawCount >= MAX_DRAWS) return;
 
     let btn = document.querySelector('.view.active .btn-primary');
@@ -77,7 +82,7 @@ async function fetchMovies() {
     const maxLength = slider ? slider.value : 110;
 
     const genreIds = Array.from(document.querySelectorAll('#genre-grid .selected'))
-        .map(el => el.getAttribute('data-id')).join(',');
+        .map(el => el.getAttribute('data-id')).join('|');
 
     const providerIds = Array.from(document.querySelectorAll('#view-platforms .selected'))
         .map(el => el.getAttribute('data-id')).join('|');
@@ -106,6 +111,8 @@ async function fetchMovies() {
             if(drawCount > 0) updateDrawButton();
         }
     }
+
+    return false
 }
 
 function updateDrawButton() {

@@ -17,6 +17,14 @@ class RandomMovieView(APIView):
         provider_id=request.data.get('platform', '')
         max_length=request.data.get('max_length', 110)
 
+        excluded_ids = []
+        if request.user.is_authenticated:
+            excluded_ids = list(request.user.watched_movies.values_list('external_id', flat=True))
+
+        session_excluded = request.session.get('recently_drawn',[])
+        all_excluded = set(excluded_ids + session_excluded)
+
+
         tmdb_url = "https://api.themoviedb.org/3/discover/movie"
 
         params = {
@@ -41,26 +49,37 @@ class RandomMovieView(APIView):
             initial_response.raise_for_status()
             data = initial_response.json()
 
-            total_pages = data.get('total_pages', 0)
+            total_pages = min(data.get('total_pages', 1),30)
 
-            if total_pages == 0:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+            random_movie = None
 
-            max_page = min(total_pages, 30)
-            random_page = random.randint(1, max_page)
-
-            if random_page > 1:
+            for _ in range(3):
+                random_page = random.randint(1, total_pages)
                 params['page'] = random_page
+
                 response = requests.get(tmdb_url, params=params)
                 response.raise_for_status()
-                data = response.json()
+                movies = response.json().get('results',[])
 
-            movies = data.get('results', [])
+                random.shuffle(movies)
 
-            if not movies:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                for m in movies:
+                    m_id = str(m.get('id'))
+                    if m_id not in all_excluded:
+                        random_movie = m
+                        break
+                
+                if random_movie:
+                    break
 
-            random_movie = random.choice(movies)
+            if not random_movie:
+                if not movies: return Response(status=status.HTTP_404_NOT_FOUND)
+                random_movie = random.choice(movies)
+
+            session_excluded.append(str(random_movie.get('id')))
+            if len(session_excluded) > 20:
+                session_excluded.pop(0)
+            request.session['recently_drawn'] = session_excluded
 
             return Response({
                 "id": random_movie.get('id'),
