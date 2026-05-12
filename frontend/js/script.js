@@ -1,5 +1,5 @@
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const MAX_DRAWS = 3; 
+const MAX_DRAWS = 10;
 
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://127.0.0.1:8000/api/'
