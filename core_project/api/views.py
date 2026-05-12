@@ -56,9 +56,8 @@ class RandomMovieView(APIView):
 
             total_pages = min(data.get('total_pages', 1), 30)
             random_movie = None
-            movies = [] # Definiujemy tu, żeby była dostępna dla fallbacku
+            movies = []
 
-            # PĘTLA 1: Próba znalezienia unikalnego filmu
             for _ in range(3):
                 random_page = random.randint(1, total_pages)
                 params['page'] = random_page
@@ -80,7 +79,6 @@ class RandomMovieView(APIView):
                 if random_movie:
                     break
 
-            # --- LOGIKA FALLBACKU (POZA PĘTLĄ) ---
             is_fallback = False
             if not random_movie:
                 if movies:
@@ -89,7 +87,6 @@ class RandomMovieView(APIView):
                 else:
                     return Response({"detail": "Brak filmów dla tych filtrów!"}, status=404)
 
-            # --- ODPOWIEDŹ Z FLAGĄ ---
             return Response({
                 "id": random_movie.get('id'),
                 "title": random_movie.get('title'),
@@ -98,7 +95,7 @@ class RandomMovieView(APIView):
                 "vote_average": random_movie.get('vote_average'),
                 "poster_path": random_movie.get('poster_path'),
                 "genre_ids": random_movie.get('genre_ids', []),
-                "is_fallback": is_fallback  # <--- KONIECZNIE TO DODAJ
+                "is_fallback": is_fallback 
             }, status=status.HTTP_200_OK)
 
         except requests.RequestException:
