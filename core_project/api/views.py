@@ -35,7 +35,7 @@ class RandomMovieView(APIView):
         params = {
             'api_key': settings.TMDB_API_KEY,
             'language': 'en-US',
-            'watch_region': 'US',
+            'watch_region': 'PL',
             'sort_by': 'popularity.desc',
             'vote_average.gte': 7.0,
             'vote_count.gte': 100,
