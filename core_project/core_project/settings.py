@@ -86,6 +86,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://127.0.0.1:63342",
@@ -95,6 +97,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
     "https://stream-match-six.vercel.app",
 ]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'core_project.urls'
 

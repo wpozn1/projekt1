@@ -61,7 +61,16 @@ function updateProgress(viewId) {
     }
 }
 
-async function fetchMovies() {
+let drawnMovieIds = [];
+let isPoolExhausted = false;
+
+async function fetchMovies(e) {
+
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     if (drawCount >= MAX_DRAWS) return;
 
     let btn = document.querySelector('.view.active .btn-primary');
@@ -77,25 +86,74 @@ async function fetchMovies() {
     const maxLength = slider ? slider.value : 110;
 
     const genreIds = Array.from(document.querySelectorAll('#genre-grid .selected'))
-        .map(el => el.getAttribute('data-id')).join(',');
+        .map(el => el.getAttribute('data-id')).join('|');
 
     const providerIds = Array.from(document.querySelectorAll('#view-platforms .selected'))
         .map(el => el.getAttribute('data-id')).join('|');
 
+    let token = localStorage.getItem('accessToken');
+    const headers = {'Content-Type': 'application/json'};
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
-        const response = await fetch(`${API_URL}match/`, {
+        let response = await fetch(`${API_URL}match/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength })
+            headers: headers,
+            credentials: 'include',
+            body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength, excluded: drawnMovieIds})
         });
+
+        if (response.status === 401) {
+            const refreshToken = localStorage.getItem('refreshToken');
+            
+            if (refreshToken) {
+                const refreshResponse = await fetch(`${API_URL}auth/jwt/refresh/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: refreshToken })
+                });
+
+                if (refreshResponse.ok) {
+                    const refreshData = await refreshResponse.json();
+                    const newToken = refreshData.access;
+                    
+                    localStorage.setItem('accessToken', newToken);
+                    headers['Authorization'] = `Bearer ${newToken}`;
+
+                    response = await fetch(`${API_URL}match/`, {
+                        method: 'POST',
+                        headers: headers,
+                        credentials: 'include',
+                        body: JSON.stringify({ genre: genreIds, platform: providerIds, max_length: maxLength, excluded: drawnMovieIds})
+                    });
+                }
+            }
+        }
 
         if (response.ok) {
             const randomMovie = await response.json();
+
+            if (randomMovie.is_fallback) {
+                if (drawCount > 0 && !isPoolExhausted) {
+                    alert("Pula unikalnych filmów z Twoimi filtrami się skończyła! Pokazuję losowy hit spoza listy.");
+                    isPoolExhausted = true;
+                }
+                drawnMovieIds = []; 
+            } else {
+                drawnMovieIds.push(String(randomMovie.id));
+            }
             drawCount++;
             updateDrawButton();
             displayMovie(randomMovie);
         } else {
-            alert('No movies found. Try wider criteria!');
+            if (response.status === 401) {
+                alert('Twoja sesja wygasła. Zaloguj się ponownie.');
+            } else {
+                alert('No movies found. Try wider criteria!');
+            }
         }
     } catch (error) {
         console.error("API error:", error);
@@ -106,6 +164,30 @@ async function fetchMovies() {
             if(drawCount > 0) updateDrawButton();
         }
     }
+
+    return false
+}
+
+async function refreshAccessToken() {
+    const refresh = localStorage.getItem('refreshToken');
+    if (!refresh) return null;
+
+    try {
+        const response = await fetch(`${API_URL}auth/jwt/refresh/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refresh })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('accessToken', data.access);
+            return data.access;
+        }
+    } catch (err) {
+        console.error("Nie udało się odświeżyć tokena:", err);
+    }
+    return null;
 }
 
 function updateDrawButton() {
@@ -178,6 +260,18 @@ async function saveMovie() {
                 saveBtn.style.pointerEvents = "none";
             }
             updateWatchlistUI();
+
+            setTimeout(() => {
+                drawCount = 0;
+                drawnMovieIds = [];
+                isPoolExhaustedAlertShown = false;
+
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                const filterView = document.getElementById('view-filters'); // lub 'view-start'
+                if (filterView) filterView.classList.add('active');
+
+                updateDrawButton();
+            }, 1000);
         }
     } catch (error) {
         console.error("Save error:", error);

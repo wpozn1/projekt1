@@ -6,30 +6,43 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import MovieSerializer
 from .models import Movie
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RandomMovieView(APIView):
+    authentication_classes = [JWTAuthentication]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
     def post(self, request):
-        genre_id=request.data.get('genre', '')
-        provider_id=request.data.get('platform', '')
-        max_length=request.data.get('max_length', 110)
+        genre_id = request.data.get('genre', '')
+        provider_id = request.data.get('platform', '')
+        max_length = request.data.get('max_length', 110)
+        
+        excluded_from_frontend = request.data.get('excluded', [])
+        
+        excluded_from_db = []
+        if request.user.is_authenticated:
+            excluded_from_db = list(request.user.watched_movies.values_list('external_id', flat=True))
+
+        all_excluded = set(list(map(str, excluded_from_db)) + list(map(str, excluded_from_frontend)))
 
         tmdb_url = "https://api.themoviedb.org/3/discover/movie"
-
         params = {
             'api_key': settings.TMDB_API_KEY,
             'language': 'en-US',
-            'watch_region': 'US',
+            'watch_region': 'PL',
             'sort_by': 'popularity.desc',
             'vote_average.gte': 7.0,
             'vote_count.gte': 100,
         }
 
         if genre_id:
-            params['with_genres'] = str(genre_id).replace(',','|')
+            params['with_genres'] = str(genre_id).replace(',', '|')
         if provider_id:
             params['with_watch_providers'] = str(provider_id).replace(',', '|')
         if max_length:
@@ -41,26 +54,38 @@ class RandomMovieView(APIView):
             initial_response.raise_for_status()
             data = initial_response.json()
 
-            total_pages = data.get('total_pages', 0)
+            total_pages = min(data.get('total_pages', 1), 30)
+            random_movie = None
+            movies = []
 
-            if total_pages == 0:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-
-            max_page = min(total_pages, 30)
-            random_page = random.randint(1, max_page)
-
-            if random_page > 1:
+            for _ in range(3):
+                random_page = random.randint(1, total_pages)
                 params['page'] = random_page
+
                 response = requests.get(tmdb_url, params=params)
                 response.raise_for_status()
-                data = response.json()
+                movies = response.json().get('results', [])
 
-            movies = data.get('results', [])
+                random.shuffle(movies)
 
-            if not movies:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                for m in movies:
+                    m_id = str(m.get('id'))
+                    if m_id in all_excluded:
+                        continue
+                    
+                    random_movie = m
+                    break
+                
+                if random_movie:
+                    break
 
-            random_movie = random.choice(movies)
+            is_fallback = False
+            if not random_movie:
+                if movies:
+                    random_movie = random.choice(movies)
+                    is_fallback = True
+                else:
+                    return Response({"detail": "Brak filmów dla tych filtrów!"}, status=404)
 
             return Response({
                 "id": random_movie.get('id'),
@@ -70,6 +95,7 @@ class RandomMovieView(APIView):
                 "vote_average": random_movie.get('vote_average'),
                 "poster_path": random_movie.get('poster_path'),
                 "genre_ids": random_movie.get('genre_ids', []),
+                "is_fallback": is_fallback 
             }, status=status.HTTP_200_OK)
 
         except requests.RequestException:
