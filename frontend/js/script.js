@@ -260,6 +260,18 @@ async function saveMovie() {
                 saveBtn.style.pointerEvents = "none";
             }
             updateWatchlistUI();
+
+            setTimeout(() => {
+                drawCount = 0;
+                drawnMovieIds = [];
+                isPoolExhaustedAlertShown = false;
+
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                const filterView = document.getElementById('view-filters'); // lub 'view-start'
+                if (filterView) filterView.classList.add('active');
+
+                updateDrawButton();
+            }, 1000);
         }
     } catch (error) {
         console.error("Save error:", error);
